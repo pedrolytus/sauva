@@ -1,0 +1,30 @@
+{
+  "name": "@lytus/sauva",
+  "version": "0.1.1",
+  "description": "Parceiro de arquitetura, orquestrador e cultura de desenvolvimento para levar um projeto de software da ideia à entrega, conduzido por agentes de IA.",
+  "bin": {
+    "sauva": "bin/cli.js"
+  },
+  "files": [
+    "bin",
+    "templates"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "keywords": [
+    "ai",
+    "agents",
+    "agent-skills",
+    "spec-driven-development",
+    "claude",
+    "claude-code",
+    "antigravity"
+  ],
+  "author": "LYTUS Inteligência de Negócios",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pedrolytus/sauva"
+  }
+}
