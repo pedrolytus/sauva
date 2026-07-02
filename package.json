@@ -29,6 +29,6 @@
   "author": "LYTUS Inteligência de Negócios",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pedrolytus/sauva"
+    "url": "git+https://github.com/pedrolytus/sauva.git"
   }
 }
