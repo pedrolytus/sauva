@@ -21,6 +21,39 @@ de seguir, em vez de perguntar de novo o que já foi respondido. Se a pessoa
 usar um termo técnico errado ou impreciso, não corrija publicamente — apenas
 confirme o que você entendeu em palavras simples e siga.
 
+## Modos de condução
+
+`state.modo` (perguntado antes do Bloco 1, ver `SKILL.md`) muda o
+COMPORTAMENTO deste roteiro, nunca o conteúdo final gravado nas specs — o
+resultado em `specs/` tem a mesma estrutura independentemente do modo.
+
+- **Autopilot** — para os blocos que admitem um palpite razoável a partir
+  de padrões comuns do domínio (Blocos 2, 3, 7 e 8: persona, objetivos,
+  stack, contratos), proponha uma resposta plausível e peça confirmação
+  binária rápida ("vou assumir que é uso diário, de qualquer lugar — tá
+  bom ou quer mudar?") em vez de fazer a pergunta aberta. Os Blocos 1, 5, 6
+  e 11 (nome do projeto, regras de domínio, dados sensíveis, o que a IA
+  nunca pode fazer sozinha) continuam SEMPRE abertos e nunca são inferidos
+  — são bloqueantes por natureza. Toda linha de spec preenchida por
+  inferência (não por resposta direta da pessoa) recebe o marcador
+  `[INFERIDO]` no início da linha, ex.: `- Persona alvo: [INFERIDO] pessoa
+  adulta, uso pessoal, baixa frequência`. Ao final da Fase 1, liste todas
+  as linhas `[INFERIDO]` num resumo único para revisão em lote, antes da
+  pergunta de fechamento de escopo — isso substitui a confirmação
+  pergunta-por-pergunta por uma revisão só, sem burocratizar. Esse marcador
+  é só uma tag textual: não é um sistema de rastreabilidade completo, não
+  gera arquivo de log separado nem histórico de mudança.
+- **Mentor** — o comportamento padrão deste roteiro: cada bloco é
+  perguntado por completo, e a seção "Diga assim" de cada bloco é sempre
+  acompanhada de uma frase curta de porquê aquilo importa antes de
+  perguntar (ex.: "isso importa porque define se vamos precisar de sistema
+  de login desde o início").
+- **Dev** — perguntas diretas, sem tradução para linguagem leiga e sem
+  explicar por que a pergunta importa. Pode agrupar múltiplos blocos numa
+  única pergunta compacta quando a pessoa demonstrar domínio técnico (ex.:
+  perguntar Blocos 7 e 9 juntos como "stack, persistência e modelagem de
+  dados?").
+
 ## Bloco 1 — Visão e problema → `PRD.md`
 **Diga assim:** "Me conta a ideia. Que problema isso resolve? Pra quem?"
 - Qual problema esse projeto resolve, em uma frase? Para quem?
@@ -74,7 +107,7 @@ pessoa veja o que é dela, ou todo mundo vê tudo?"
   `RULES.md` em vez de simplesmente pular a seção — uma ausência
   documentada é diferente de uma pergunta que nunca foi feita.
 
-## Bloco 7 — Como vai ser construído por dentro → `ARCHITECTURE.md` / `TECH_STACK.md`
+## Bloco 7 — Como vai ser construído por dentro → `ARCHITECTURE.md` / `TECH_STACK.md` / `DEPLOY.md`
 **Diga assim:** não pergunte tecnologia diretamente pra quem não é técnico
 — na maioria das vezes a pessoa não tem essa resposta e não deveria
 precisar ter. Em vez disso, pergunte sobre o contexto de uso ("isso vai
@@ -87,6 +120,20 @@ cliente exige que rode na AWS").
 - Existe alguma decisão já tomada fora desta conversa (por exigência de
   cliente, parceiro, ou sistema já existente)?
 - Existe orçamento ou restrição de custo relevante?
+
+**Sub-bloco de deploy — sempre pergunte, mesmo em projetos pequenos:**
+- "Isso vai ficar só na sua máquina, ou alguém de fora vai acessar (site,
+  app publicado, sistema que outras pessoas usam)?"
+- Se houver publicação: "Existe uma data ou evento importante pra isso
+  estar no ar?" e "Quem vai ser responsável por cuidar disso depois de
+  publicado — você, alguém técnico, ou ainda ninguém definido?"
+- Se o projeto vai ser publicado, `DEPLOY.md` é preenchido a partir dessas
+  respostas (ambientes, provedor, responsável). Detalhes operacionais finos
+  (passos exatos de deploy, variáveis de ambiente específicas) podem ficar
+  como rascunho aqui e ser refinados depois por um sub-agente
+  `deploy-<projeto>`, quando o(a) gestor(a) delegar essa área na Fase 2/3.
+  Se o projeto nunca sai da máquina de quem cria, marque `DEPLOY.md` como
+  não aplicável e siga adiante sem insistir.
 
 Proponha a arquitetura (camadas Apresentação / Aplicação / Domínio /
 Infraestrutura, mais os design patterns que se aplicam — ver
@@ -172,5 +219,11 @@ não precisa aparecer na conversa.
 ## Bloco 12 — Por onde começar → `TASKS.md`
 A partir de tudo levantado, proponha você mesmo uma primeira lista de
 tarefas de alto nível em linguagem de resultado ("criar a tela de login",
-não "implementar endpoint de autenticação") e valide com a pessoa. Isso
-fecha a Fase 1.
+não "implementar endpoint de autenticação") e valide com a pessoa. Agrupe
+as tarefas em blocos de entrega perceptível pela pessoa (não uma tarefa
+isolada por vez) e estime cada bloco em ordem de grandeza — P (pequeno), M
+(médio), G (grande) ou ? (incerto, ver `references/02-templates-specs.md`
+para a régua completa). Se algo for genuinamente incerto (ex.: depende de
+uma API de terceiro ainda não avaliada), marque `?` e diga isso com todas
+as letras — estimativa forçada é pior do que admitir incerteza. Isso fecha
+a Fase 1.

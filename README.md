@@ -8,7 +8,17 @@ Instala em segundos, sem configuração manual:
 npx @lytus/sauva install
 ```
 
-Isso cria a skill `sauva` no seu harness de IA (Claude Code, Antigravity, ou qualquer ambiente compatível com o padrão Agent Skills), e um arquivo de estado que torna qualquer projeto retomável, em qualquer sessão nova, sem precisar reexplicar onde vocês pararam.
+O instalador detecta quais harnesses de IA (Claude Code, Codex, Antigravity) já estão na sua máquina e pergunta em quais você quer instalar — Enter aceita os detectados automaticamente. Isso cria a skill `sauva` no(s) harness(es) escolhido(s), e um arquivo de estado que torna qualquer projeto retomável, em qualquer sessão nova, sem precisar reexplicar onde vocês pararam.
+
+## Modos de condução
+
+Logo no início, o `sauva` pergunta como você quer ser conduzido:
+
+- **Autopilot** — decide a maior parte sozinho e só chama você pra revisar o resultado. Pra quem quer ir rápido e confia no critério do agente.
+- **Mentor** (padrão) — explica cada decisão importante antes de seguir, como um tutorial. Pra quem quer aprender a tomar decisão de arquitetura no processo.
+- **Dev** — direto ao ponto, sem explicações básicas, pra quem já manja de engenharia de software e quer que o `sauva` escreva código, não dê aula.
+
+O modo pode ser trocado a qualquer momento ("muda pro modo dev daqui pra frente"). Em qualquer modo, os dois gates de aprovação humana (UI/UX e uso real a cada incremento) nunca são pulados.
 
 ## Por que existe
 
@@ -57,18 +67,22 @@ ou, se já existe um projeto em andamento:
 
 ## O que é instalado
 
+Só nos harnesses selecionados na hora do `install` (nunca todos por padrão):
+
 ```
-.sauva/state.json           # estado do projeto — não editar manualmente
-.claude/skills/sauva/        # skill para Claude Code
-.agents/skills/sauva/        # skill universal (outros harnesses)
-CLAUDE.md, AGENTS.md         # pontos de entrada lidos pelo harness
-specs/                        # criado na primeira conversa
+.sauva/state.json       # estado do projeto — não editar manualmente
+.claude/skills/sauva/    # skill para Claude Code, se selecionado
+.agents/skills/sauva/    # skill para Codex e/ou Antigravity, se selecionado(s)
+CLAUDE.md e/ou AGENTS.md # pontos de entrada, conforme harness(es) escolhido(s)
+specs/                   # criado na primeira conversa
 ```
+
+Automação/CI: use `--harness=claude-code,codex` para instalar sem prompt, ou `-y`/`--yes` para aceitar os harnesses detectados automaticamente.
 
 ## Requisitos
 
 - Node.js 18 ou superior
-- Um harness de IA com suporte a Agent Skills (Claude Code, Antigravity, ou compatível)
+- Um harness de IA com suporte a Agent Skills (Claude Code, Codex, Antigravity, ou compatível)
 
 ## Licença
 

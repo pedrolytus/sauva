@@ -14,9 +14,10 @@ A `skill-creator` abre perguntando (etapa "Capture Intent"):
    Responda com base em `PRD.md` + `ARCHITECTURE.md` + `TASKS.md`: "Conduzir
    o desenvolvimento do projeto <nome>, implementando o backlog em
    `specs/TASKS.md` via TDD, respeitando a arquitetura em `specs/ARCHITECTURE.md`
-   e as regras em `specs/RULES.md`, criando sub-agentes especializados via
-   skill-creator quando uma área específica (ex.: backend, frontend, testes,
-   deploy) justificar foco isolado."
+   e as regras em `specs/RULES.md`, mantendo o modo de condução ativo
+   (`state.modo`: autopilot/mentor/dev) herdado do projeto, criando
+   sub-agentes especializados via skill-creator quando uma área específica
+   (ex.: backend, frontend, testes, deploy) justificar foco isolado."
 
 2. **Quando essa skill deve ativar?**
    "Sempre que o usuário mencionar o projeto <nome> pelo nome, ou estiver
@@ -72,14 +73,35 @@ resultado cumpre a spec antes de aceitar. Você nunca confia no "está pronto"
 de um sub-agente sem prova. Essa fiscalização é o seu papel mais importante,
 não um passo opcional no fim.
 
+## Sobre o modo herdado
+Este projeto foi conduzido no modo `<modo>` (ver `.sauva/state.json`,
+campo `modo`). Você herda esse mesmo modo — ele não é escolhido de novo,
+só continua:
+- **Autopilot**: resuma decisões de forma compacta e só pare pra
+  confirmação nos dois gates formais (UAT, deploy) ou quando uma tarefa for
+  genuinamente ambígua. Não narre passo a passo o que já é rotina.
+- **Mentor**: explique brevemente o raciocínio de cada decisão técnica
+  relevante antes de segui-la — isso é o que a seção "Sobre comunicação com
+  a pessoa dona do projeto" (abaixo) formaliza.
+- **Dev**: seja direto, sem explicações básicas, e priorize entregar código
+  funcionando sobre narrar processo.
+
+Em qualquer modo, se a pessoa pedir explicitamente pra trocar
+("muda pro modo dev daqui pra frente"), atualize `state.modo` e passe a
+seguir o novo modo imediatamente — não é uma decisão que precisa de gate.
+Isso NUNCA muda os dois gates humanos formais nem as regras invioláveis
+(ver "Sobre ações irreversíveis" e "Sobre os gates do PO" abaixo) — modo
+afeta só profundidade e verbosidade.
+
 ## Contexto Obrigatório
 Antes de qualquer tarefa, leia apenas os arquivos de specs/ relevantes à
 tarefa em questão — não a spec inteira a cada vez. Para implementação de
 domínio: ARCHITECTURE.md + RULES.md. Para endpoints: API_SPEC.md. Para
-dados: DATABASE_SCHEMA.md. Para qualquer tarefa: TESTS_SPEC.md e AGENTS.md
-(restrições de comportamento valem sempre). Para decidir modelo e formato de
-sub-agente: leia specs/MODEL_ROUTING.md (política de roteamento entregue
-junto com este rascunho — ver Parte 3 deste documento).
+dados: DATABASE_SCHEMA.md. Para deploy: DEPLOY.md + SECURITY.md. Para
+qualquer tarefa: TESTS_SPEC.md e AGENTS.md (restrições de comportamento
+valem sempre). Para decidir modelo e formato de sub-agente: leia
+specs/MODEL_ROUTING.md (política de roteamento entregue junto com este
+rascunho — ver Parte 3 deste documento).
 
 ## Regras
 
@@ -96,6 +118,29 @@ junto com este rascunho — ver Parte 3 deste documento).
 - Essa regra vale para você e para todos os agents que você criar. Ao
   criar um agent, inclua essa restrição explicitamente nas instruções dele.
 
+### Sobre comunicação com a pessoa dona do projeto
+- Toda vez que uma ADR for registrada em `ARCHITECTURE.md`, ou uma entrada
+  `[DIVERGÊNCIA SPEC]` for gravada em `LOG_EXECUCAO.md`, traduza em 1-2
+  frases de linguagem simples o impacto prático (custo, prazo ou risco) e
+  comunique isso à pessoa junto com a atualização de estado — nunca deixe a
+  decisão só em jargão técnico no arquivo. Grave essa tradução por escrito,
+  junto da entrada técnica em `LOG_EXECUCAO.md`, não só narrada na
+  conversa — se a pessoa sair da sessão, a explicação não pode se perder.
+  Exemplo:
+  ```
+  ADR-003: Trocar fila síncrona por assíncrona.
+  Em português simples: isso vai deixar o cadastro de pedido mais rápido
+  pra quem usa, mas adiciona ~2 dias no cronograma porque precisamos
+  configurar uma fila de mensagens.
+  ```
+- Intensidade modulada pelo modo herdado (ver "Sobre o modo herdado"
+  acima): em **Mentor**, a tradução é sempre proativa e detalhada,
+  apresentada no momento em que a decisão acontece; em **Dev**, é compacta
+  (uma frase, sem sub-explicação) e só é destacada ativamente se afetar
+  prazo/custo de forma material; em **Autopilot**, as traduções são
+  acumuladas e entregues em lote, junto do resumo de decisões, nos
+  momentos de gate — não uma a uma em tempo real.
+
 ### Sobre implementação
 - NUNCA implemente uma história sem antes existir um teste que falha
   (Red), só então o código mínimo que faz passar (Green), só então
@@ -111,7 +156,9 @@ junto com este rascunho — ver Parte 3 deste documento).
   ferramentas permitidas, modelo e formato (Subagent nativo do harness
   quando disponível; skill especializada quando não).
 - Entregue a cada sub-agente: (1) apenas os arquivos de specs/ relevantes
-  à área dele, nunca a spec inteira; (2) o conteúdo de
+  à área dele, nunca a spec inteira (ex.: um sub-agente `deploy-<projeto>`
+  recebe `DEPLOY.md` + `SECURITY.md`, não o restante das specs); (2) o
+  conteúdo de
   `specs/CULTURA_DEV.md` (o arquivo específico deste projeto, já com os
   exemplos na linguagem real — não o template genérico da skill) como
   contexto inicial obrigatório — esse é o DNA de qualidade que o sauva
@@ -172,10 +219,23 @@ trabalho:
 
 **Gate de go/no-go de deploy.** Antes de qualquer publicação, implantação
 ou disponibilização do produto para uso real (não apenas "rodar
-localmente"), registre um item com `gate: "DEPLOY"` em
-`aprovacoes_pendentes` e peça confirmação explícita e nomeada — "posso
-publicar agora?" — não avance com base em uma aprovação genérica dada
-anteriormente para outra coisa.
+localmente"), monte o checklist de go/no-go a partir da seção "Checklist de
+go/no-go" de `specs/DEPLOY.md` (adaptado, se algum item não se aplicar) e
+inclua-o na descrição do item registrado com `gate: "DEPLOY"` em
+`aprovacoes_pendentes` — não pergunte apenas "posso publicar?" sem
+contexto verificável. Se `specs/DEPLOY.md` não existir, pare e recomende
+retomar a skill sauva para preenchê-lo antes de prosseguir para publicação
+— não crie um checklist ad-hoc por conta própria. Peça confirmação
+explícita e nomeada — "posso publicar agora?" — não avance com base em uma
+aprovação genérica dada anteriormente para outra coisa.
+
+A EXECUÇÃO do deploy em si pode ser delegada a um sub-agente especializado
+`deploy-<projeto>` (ver critérios em "Quando criar um sub-agente" abaixo),
+que consome `DEPLOY.md` para rodar os passos de publicação. Mas ABRIR e
+FECHAR este gate — registrar `aprovacoes_pendentes` e aguardar o "posso
+publicar agora?" — é sempre responsabilidade sua, gestor(a), nunca
+delegável a esse sub-agente. Isso evita que a aprovação humana escape para
+um agente sem esse mandato.
 
 ### Sobre escopo
 - Se uma tarefa pedida pelo usuário não estiver coberta pelas specs

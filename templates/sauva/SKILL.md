@@ -50,7 +50,10 @@ Todo acionamento desta skill começa pela mesma sequência, sem exceção:
    trabalho criar um na primeira vez que alguém iniciar um projeto naquela
    pasta. Depois de criado, trate como projeto novo — vá para a Fase 1.
 2. Com base em `state.fase`, decida para onde ir:
-   - `nao_iniciado` ou arquivo ausente → Fase 1.
+   - `nao_iniciado` ou arquivo ausente → se `state.modo` ainda for `null`,
+     pergunte o modo de condução ANTES do Bloco 1 (ver "Modo de condução"
+     logo abaixo) e grave a resposta em `state.modo` antes de prosseguir;
+     só depois vá para a Fase 1.
    - `entrevista_em_andamento` → retome exatamente do `state.ultimo_passo`,
      sem repetir perguntas já respondidas.
    - `escopo_fechado` ou `desenvolvimento` → leia apenas os arquivos de
@@ -73,9 +76,37 @@ encerrar sua resposta.** Isso é o que torna o projeto retomável a qualquer
 momento, em qualquer sessão nova, sem custo de recontextualização. Ver
 `references/07-estado.md` para o schema completo e exemplos de escrita.
 
+### Modo de condução (perguntar antes do Bloco 1, uma única vez por projeto)
+
+Pergunte em linguagem simples — nunca use os nomes técnicos "Autopilot",
+"Mentor" ou "Dev" na pergunta em si, só depois de escolhido:
+
+> "Pra eu conduzir esse projeto do jeito certo pra você, me diz uma coisa:
+> (1) você quer que eu decida a maior parte sozinho(a) e só te chame pra
+> revisar o resultado; (2) você quer que eu explique cada decisão
+> importante antes de seguir, como um tutorial; ou (3) você já manja de
+> arquitetura de software e quer que eu seja direto, sem explicações
+> básicas?"
+
+Grave a resposta em `state.modo` (`autopilot`, `mentor` ou `dev`,
+respectivamente) imediatamente, antes de iniciar o Bloco 1. Se a pessoa não
+tiver preferência clara ou pedir pra você decidir, use `mentor` como
+padrão — é o modo mais seguro e mais alinhado ao público não-técnico que
+esta skill foi pensada para atender. Ver `references/01-entrevista.md`,
+seção "Modos de condução", para como cada modo muda o ritmo e a
+profundidade das perguntas, e `references/03-handoff-gestor.md`, seção
+"Sobre o modo herdado", para como o `gestor-<projeto>` continua respeitando
+o mesmo modo depois do handoff.
+
 ## Regras
 
 ### Faça sempre
+- Respeite o modo ativo (`state.modo`) na profundidade e no ritmo da
+  entrevista e das comunicações, mas NUNCA pule os dois gates humanos
+  formais (UAT por incremento, go/no-go de deploy) nem as regras
+  invioláveis (append-only em specs/, TDD, nunca alterar teste sem
+  aprovação, nunca ação irreversível sem aprovação) — modo nunca remove
+  salvaguarda, só ajusta verbosidade e pacing.
 - Grave toda decisão relevante em um arquivo de `specs/`. Uma decisão que só
   existe na conversa não existe para o projeto.
 - Atualize `.sauva/state.json` a cada mudança de fase ou passo relevante —
@@ -130,15 +161,30 @@ stack → inspirações visuais e estilo (aceite prints anexados na conversa) �
 contratos de API/dados (se aplicável) → estratégia de testes →
 comportamento esperado dos agentes que vão trabalhar no projeto.
 
+A profundidade de cada bloco é modulada por `state.modo` — ver
+`references/01-entrevista.md`, seção "Modos de condução", antes de conduzir
+o primeiro bloco.
+
 A cada bloco de perguntas respondido: (1) escreva ou atualize o arquivo de
 spec correspondente usando os modelos em `references/02-templates-specs.md`;
 (2) atualize `state.ultimo_passo` em `.sauva/state.json`. Não espere
 terminar tudo para começar a gravar — grave incrementalmente, em ambos os
 lugares.
 
+Antes de perguntar se o escopo está fechado, garanta dois passos finais:
+(1) para cada bloco de `TASKS.md`, atribua uma estimativa de ordem de
+grandeza (P/M/G/?, ver `references/02-templates-specs.md`) e apresente o
+resumo em linguagem simples pra pessoa — ex.: "a base do app deve levar
+poucos dias; a parte de pagamento é a mais incerta, ainda não dá pra
+estimar direito"; (2) se o projeto for ser publicado/implantado fora da
+máquina de quem está criando, garanta que `DEPLOY.md` também esteja
+preenchido (as respostas já levantadas no Bloco 7 sobre onde/quando
+publicar).
+
 Pare e pergunte explicitamente quando tiver pelo menos `PRD.md`, `RULES.md`,
-`ARCHITECTURE.md`, `DESIGN.md` (se o projeto tiver interface visual) e um
-`TASKS.md` inicial: **"O escopo está fechado o
+`ARCHITECTURE.md`, `DESIGN.md` (se o projeto tiver interface visual),
+`DEPLOY.md` (se o projeto for publicado/implantado fora da máquina de quem
+cria) e um `TASKS.md` inicial já estimado: **"O escopo está fechado o
 suficiente para começarmos o desenvolvimento, ou você quer refinar mais
 alguma coisa?"**
 
@@ -175,7 +221,10 @@ Só executa após confirmação explícita da pessoa. Siga
    `gestor-<slug-do-projeto>`.
 5. Você entrega à `skill-creator` as respostas da etapa "Capture Intent" já
    preenchidas — extraídas diretamente das specs, sem reinterrogar a
-   pessoa. O rascunho completo do `SKILL.md` do(a) gestor(a) está em
+   pessoa, incluindo `state.modo` do projeto na resposta sobre o que a
+   skill deve habilitar o agente a fazer, pra que o(a) gestor(a) já nasça
+   respeitando o mesmo modo de condução. O rascunho completo do `SKILL.md`
+   do(a) gestor(a) está em
    `references/03-handoff-gestor.md`. Esse rascunho descreve um
    **orquestrador**, não um implementador padrão: o papel central dele é
    decompor o backlog, delegar para sub-agentes especializados, e

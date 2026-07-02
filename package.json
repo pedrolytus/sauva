@@ -1,6 +1,6 @@
 {
   "name": "@lytus/sauva",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Parceiro de arquitetura, orquestrador e cultura de desenvolvimento para levar um projeto de software da ideia à entrega, conduzido por agentes de IA.",
   "bin": {
     "sauva": "bin/cli.js"
@@ -9,6 +9,9 @@
     "bin",
     "templates"
   ],
+  "dependencies": {
+    "prompts": "^2.4.2"
+  },
   "engines": {
     "node": ">=18"
   },
@@ -20,7 +23,8 @@
     "spec-driven-development",
     "claude",
     "claude-code",
-    "antigravity"
+    "antigravity",
+    "codex"
   ],
   "author": "LYTUS Inteligência de Negócios",
   "repository": {

@@ -21,6 +21,7 @@ projeto/
     DATABASE_SCHEMA.md
     TESTS_SPEC.md
     SECURITY.md
+    DEPLOY.md              # pule se o projeto nunca for publicado/implantado fora da máquina de quem cria
     AGENTS.md
     TASKS.md
     GLOSSARY.md
@@ -249,6 +250,53 @@ testável objetivamente — nada de regra vaga tipo "deve ser seguro".
 
 ---
 
+## DEPLOY.md (pule se o projeto não for publicado/implantado, ex.: script de uso único)
+
+```markdown
+# Deploy: <nome do projeto>
+
+## Ambientes
+| Ambiente  | Propósito                              | URL/acesso |
+|-----------|------------------------------------------|------------|
+| dev       | desenvolvimento local                   |            |
+| staging   | teste antes de publicar (se aplicável)  |            |
+| produção  | uso real                                |            |
+
+## Provedor / hosting
+<onde o sistema roda: Vercel, servidor próprio, loja de app, etc. — e por quê>
+
+## Variáveis de ambiente e segredos
+| Nome | Ambiente | Onde é definida | Sensível? |
+|------|----------|------------------|-----------|
+|      |          |                  |           |
+
+Nunca commitar segredo em texto puro — ver RULES.md/SECURITY.md.
+
+## Passos de publicação
+1. <passo 1, em ordem de execução real>
+2. <passo 2>
+
+## Como verificar que o deploy funcionou
+<checagem pós-deploy — smoke test mínimo>
+
+## Plano de rollback
+<como reverter se algo der errado — passos concretos, não "reverte o commit">
+
+## Checklist de go/no-go (consumido pelo Gate de Deploy do gestor)
+[ ] Todos os testes da suíte completa passam
+[ ] Variáveis de ambiente de produção conferidas
+[ ] Plano de rollback testado ou pelo menos revisado
+[ ] Pessoa dona do projeto avisada da janela de publicação
+```
+
+A execução do deploy em si pode ser delegada pelo(a) gestor(a) a um
+sub-agente especializado (`deploy-<projeto>`), mas este arquivo é a spec
+que esse sub-agente consome — não pule a escrita dele achando que "o
+sub-agente resolve na hora"; ver `references/03-handoff-gestor.md`, seção
+do Gate de go/no-go de deploy.
+
+---
+
 ## AGENTS.md
 
 ```markdown
@@ -280,13 +328,30 @@ testável objetivamente — nada de regra vaga tipo "deve ser seguro".
 ```markdown
 # Backlog
 
+## Legenda de estimativa
+Estimativa de ordem de grandeza (T-shirt size), não prazo comprometido —
+serve pra decidir se vale seguir, não pra cobrar prazo depois.
+- P (pequeno): horas até 1-2 dias
+- M (médio): alguns dias
+- G (grande): 1-2 semanas ou mais
+- ? (incerto): não dá pra estimar sem investigar mais — trate como risco
+
+## Bloco: <nome do bloco de funcionalidade>
+Estimativa do bloco: <P/M/G/?>
 [ ] T1. <tarefa de alto nível>
 [ ] T2. <tarefa de alto nível>
+
+## Bloco: <próximo bloco>
+Estimativa do bloco: <P/M/G/?>
+[ ] T3. <tarefa de alto nível>
 ```
 
-Na Fase 1, este arquivo recebe só tarefas de alto nível. O(a)
-`gestor-<projeto>` (Fase 3) é quem fatia isso em histórias e critérios de
-aceitação durante o desenvolvimento.
+Agrupe tarefas em blocos de entrega perceptível pela pessoa (alinhado ao
+que depois vira um incremento do Gate de UAT), não uma tarefa por vez —
+estimar tarefa individual isolada tende a ser ruído. Na Fase 1, este
+arquivo recebe só tarefas de alto nível, já organizadas em blocos e
+estimadas. O(a) `gestor-<projeto>` (Fase 3) é quem fatia isso em histórias
+e critérios de aceitação durante o desenvolvimento.
 
 ---
 
