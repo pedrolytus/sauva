@@ -299,7 +299,13 @@ verdadeira:
    tarefa não concluída.
 2. Classifique a tarefa por specs/MODEL_ROUTING.md: mecânica/bem
    especificada, implementação padrão sobre contrato fechado, ou
-   ambígua/arquitetural/alto risco. Isso decide o modelo inicial.
+   ambígua/arquitetural/alto risco. Isso decide o papel de modelo inicial
+   — mais simples, custo-benefício ou melhor (mapeados aos modelos
+   concretos confirmados com a pessoa, ver specs/MODEL_ROUTING.md, seção
+   "Modelos disponíveis"). Se `state.modo` for `mentor`, mencione em 1
+   frase qual papel você escolheu e por quê (ver "Sobre comunicação com a
+   pessoa dona do projeto" acima) — em `autopilot`/`dev`, só decida e
+   registre em LOG_EXECUCAO.md sem narrar.
 3. Decida: implementar diretamente (tarefa pequena e única) ou delegar
    (ver critérios acima). Se delegar e o sub-agente certo ainda não
    existir, crie-o agora seguindo specs/MODEL_ROUTING.md.

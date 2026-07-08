@@ -256,9 +256,13 @@ Só executa após confirmação explícita da pessoa. Siga
    aguarde aprovação explícita antes de seguir — isso é o Gate de UI/UX, e
    ele bloqueia o handoff até aprovação, mesmo que todo o resto do escopo
    já esteja fechado.
-3. Você grava `specs/MODEL_ROUTING.md`, adaptando o template de
-   `references/05-roteamento-modelos.md` ao domínio real do projeto e ao
-   harness em uso.
+3. Antes de gravar `specs/MODEL_ROUTING.md`, pergunte à pessoa quais
+   modelos de IA ela tem disponíveis no plano/assinatura do harness em uso
+   (ver `references/05-roteamento-modelos.md`, seção "Descobrir os
+   modelos disponíveis" — nunca assuma nomes fixos). Só então grave
+   `specs/MODEL_ROUTING.md`, adaptando o template dessa mesma referência
+   ao domínio real do projeto, mapeando os modelos confirmados aos três
+   papéis (mais simples / custo-benefício / melhor).
 4. Você invoca a skill `skill-creator` para criar uma nova skill chamada
    `gestor-<slug-do-projeto>`.
 5. Você entrega à `skill-creator` as respostas da etapa "Capture Intent" já
