@@ -27,6 +27,7 @@ projeto/
     GLOSSARY.md
     MODEL_ROUTING.md      # criado na Fase 3, ver references/05-roteamento-modelos.md
     LOG_EXECUCAO.md        # criado e mantido pelo(a) gestor(a) a partir da Fase 3
+    TRACEABILITY.md        # criado e mantido pelo(a) gestor(a) a partir da Fase 3
   src/
   tests/
 ```
@@ -352,6 +353,36 @@ estimar tarefa individual isolada tende a ser ruído. Na Fase 1, este
 arquivo recebe só tarefas de alto nível, já organizadas em blocos e
 estimadas. O(a) `gestor-<projeto>` (Fase 3) é quem fatia isso em histórias
 e critérios de aceitação durante o desenvolvimento.
+
+---
+
+## TRACEABILITY.md (criado e mantido pelo(a) gestor(a) a partir da Fase 3)
+
+```markdown
+# Rastreabilidade — <nome do projeto>
+
+Mapeamento entre o que foi implementado e a spec que autoriza aquilo. Uma
+linha por tarefa concluída — não por arquivo individual, a não ser que um
+mesmo arquivo toque mais de uma spec de forma relevante. Append-only, igual
+a qualquer outra spec: uma mudança posterior vira linha nova, nunca edição
+da linha antiga.
+
+| Tarefa (TASKS.md) | Arquivo(s) de código | Spec(s) tocada(s) | Estendeu a spec original? |
+|---|---|---|---|
+| T3. Cadastro de pedido | src/domain/pedido.ts, src/api/pedidos.ts | RULES.md#R4, API_SPEC.md#POST-pedidos | Não |
+| T7. Desconto por cupom | src/domain/cupom.ts | RULES.md (R12, apêndice), API_SPEC.md (endpoint, apêndice) | Sim — ver apêndices datados nesses arquivos |
+```
+
+Este arquivo existe pra responder duas perguntas que nenhuma outra spec
+responde sozinha: "que código implementa esta regra/endpoint/tabela?" e "a
+spec ainda descreve o sistema real, ou ficou pra trás?". Uma linha é
+adicionada a cada tarefa marcada concluída (ver
+`references/03-handoff-gestor.md`, Fluxo de Execução, passo 7) — nunca em
+lote, nunca retroativamente sem justificativa. Quando uma tarefa estende o
+que a spec original previa, a linha correspondente aponta para o apêndice
+que foi acrescentado na spec — a rastreabilidade e a atualização da spec
+acontecem no mesmo passo, depois que a verificação (testes, lint, regras)
+já aprovou a implementação, nunca antes.
 
 ---
 

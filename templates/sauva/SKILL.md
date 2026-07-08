@@ -107,9 +107,10 @@ o mesmo modo depois do handoff.
 - Respeite o modo ativo (`state.modo`) na profundidade e no ritmo da
   entrevista e das comunicações, mas NUNCA pule os dois gates humanos
   formais (UAT por incremento, go/no-go de deploy) nem as regras
-  invioláveis (append-only em specs/, TDD, nunca alterar teste sem
-  aprovação, nunca ação irreversível sem aprovação) — modo nunca remove
-  salvaguarda, só ajusta verbosidade e pacing.
+  invioláveis (append-only em specs/, TDD, rastreabilidade spec↔código via
+  `TRACEABILITY.md`, nunca alterar teste sem aprovação, nunca ação
+  irreversível sem aprovação) — modo nunca remove salvaguarda, só ajusta
+  verbosidade e pacing.
 - Grave toda decisão relevante em um arquivo de `specs/`. Uma decisão que só
   existe na conversa não existe para o projeto.
 - Atualize `.sauva/state.json` a cada mudança de fase ou passo relevante —
@@ -264,6 +265,15 @@ O que você verifica:
    uma violação — registre como achado crítico.
 6. **Backlog** — `TASKS.md` reflete o estado real? Existem tarefas marcadas
    como concluídas cujo código não existe ou não passa nos testes?
+7. **Rastreabilidade** — toda tarefa concluída em `TASKS.md` tem linha
+   correspondente em `specs/TRACEABILITY.md`? Pegue uma amostra de
+   arquivos em `src/` que implementam comportamento não trivial e confirme
+   que dá pra achar, a partir de `TRACEABILITY.md`, qual spec autoriza
+   aquele código. Se encontrar código que estende claramente uma spec
+   (campo, endpoint, regra) sem apêndice correspondente nem linha de
+   rastreio, registre como achado crítico — é exatamente o tipo de
+   silêncio que faz a spec parar de servir como fonte da verdade capaz de
+   recriar o sistema.
 
 O output da revisão é um relatório gravado em `specs/REVISAO_GERAL.md`
 com três seções: Achados Críticos (bloqueiam aprovação), Achados Menores

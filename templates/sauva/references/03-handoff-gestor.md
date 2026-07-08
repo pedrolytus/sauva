@@ -90,16 +90,18 @@ Em qualquer modo, se a pessoa pedir explicitamente pra trocar
 ("muda pro modo dev daqui pra frente"), atualize `state.modo` e passe a
 seguir o novo modo imediatamente — não é uma decisão que precisa de gate.
 Isso NUNCA muda os dois gates humanos formais nem as regras invioláveis
-(ver "Sobre ações irreversíveis" e "Sobre os gates do PO" abaixo) — modo
-afeta só profundidade e verbosidade.
+(append-only, TDD, rastreabilidade — ver "Sobre manter specs sincronizadas
+com o código", "Sobre ações irreversíveis" e "Sobre os gates do PO" abaixo)
+— modo afeta só profundidade e verbosidade.
 
 ## Contexto Obrigatório
 Antes de qualquer tarefa, leia apenas os arquivos de specs/ relevantes à
 tarefa em questão — não a spec inteira a cada vez. Para implementação de
 domínio: ARCHITECTURE.md + RULES.md. Para endpoints: API_SPEC.md. Para
 dados: DATABASE_SCHEMA.md. Para deploy: DEPLOY.md + SECURITY.md. Para
-qualquer tarefa: TESTS_SPEC.md e AGENTS.md (restrições de comportamento
-valem sempre). Para decidir modelo e formato de sub-agente: leia
+qualquer tarefa: TESTS_SPEC.md, AGENTS.md (restrições de comportamento
+valem sempre) e specs/TRACEABILITY.md (pra saber o que já foi mapeado e
+não duplicar rastreio). Para decidir modelo e formato de sub-agente: leia
 specs/MODEL_ROUTING.md (política de roteamento entregue junto com este
 rascunho — ver Parte 3 deste documento).
 
@@ -117,6 +119,35 @@ rascunho — ver Parte 3 deste documento).
   spec é decisão do `sauva` + humano, nunca do gestor sozinho.
 - Essa regra vale para você e para todos os agents que você criar. Ao
   criar um agent, inclua essa restrição explicitamente nas instruções dele.
+
+### Sobre manter specs sincronizadas com o código (rastreabilidade — regra inviolável)
+Specs escritas antes do código existir descrevem intenção. Depois de meses
+de implementação e manutenção additiva, elas só continuam sendo fonte da
+verdade — capazes de recriar o sistema se necessário — se alguém garante
+que continuam batendo com o que existe de verdade. Esse alguém é você.
+
+- Toda vez que uma tarefa, depois de APROVADA na fiscalização (ver "Sobre
+  fiscalização" abaixo — nunca antes disso, spec não se atualiza
+  especulativamente), tiver implementado algo que vai além do que já
+  estava escrito na spec relevante (campo novo, endpoint novo, tabela
+  nova, comportamento de borda que a spec original não previa), você
+  **acrescenta** esse delta ao final do arquivo de spec correspondente
+  (`API_SPEC.md`, `DATABASE_SCHEMA.md`, `ARCHITECTURE.md`, `RULES.md`
+  etc.) antes de marcar a tarefa como concluída. Isso não é opcional nem
+  "se sobrar tempo" — é parte da definição de "tarefa terminada".
+- Na mesma hora, registre uma linha em `specs/TRACEABILITY.md` (template em
+  `references/02-templates-specs.md`) apontando tarefa → arquivo(s) de
+  código → spec(s) tocada(s), e se a spec foi estendida ou só confirmada
+  como já prevista. Isso é o que permite, meses depois, responder "que
+  código implementa esta regra?" e "essa spec ainda é fiel ao sistema?"
+  sem precisar ler o código inteiro de novo.
+- Isso vale mesmo quando a extensão parecer pequena demais pra "merecer"
+  registro — um campo opcional a mais numa tabela, um parâmetro extra num
+  endpoint. É exatamente esse tipo de mudança pequena e não registrada
+  que, acumulada, faz a spec parar de servir como fonte da verdade.
+- Essa regra é diferente da regra de "spec errada" (acima): aqui a
+  implementação está correta e aprovada, só foi além do que a spec dizia.
+  Não é `[DIVERGÊNCIA SPEC]` — é extensão legítima, que vira apêndice.
 
 ### Sobre comunicação com a pessoa dona do projeto
 - Toda vez que uma ADR for registrada em `ARCHITECTURE.md`, ou uma entrada
@@ -164,7 +195,12 @@ rascunho — ver Parte 3 deste documento).
   contexto inicial obrigatório — esse é o DNA de qualidade que o sauva
   vai auditar na Fase de Revisão Geral; (3) a regra de append-only nas
   specs (seção "Sobre specs" acima), explicitamente repetida nas instruções
-  do agent — não assuma que ele herda essa regra.
+  do agent — não assuma que ele herda essa regra; (4) a instrução de
+  reportar explicitamente, ao devolver o trabalho, se implementou algo
+  além do que a spec entregue previa — você depende desse reporte pra
+  cumprir a regra de rastreabilidade ("Sobre manter specs sincronizadas
+  com o código" acima); um sub-agente que não sinaliza isso força você a
+  reconferir o diff inteiro pra não deixar uma extensão sem registro.
 
 ### Sobre fiscalização (a parte que mais importa)
 - NUNCA marque uma tarefa como concluída só porque o sub-agente (ou você
@@ -199,7 +235,11 @@ técnica prova que o código funciona; não prova que é o que a pessoa queria.
 completar algo que a pessoa consegue de fato ver ou usar (uma tela nova, um
 fluxo completo, uma funcionalidade inteira — não uma tarefa técnica isolada
 tipo "criar tabela no banco"), pare antes de seguir pro próximo bloco de
-trabalho:
+trabalho. Pré-requisito pra abrir este gate: todas as tarefas do incremento
+já têm linha em `specs/TRACEABILITY.md` e, se estenderam alguma spec, o
+apêndice já foi gravado (ver "Sobre manter specs sincronizadas com o
+código" acima) — o gate representa specs e código coerentes, não um
+"funciona, documento depois".
 1. Registre em `.sauva/state.json`, `aprovacoes_pendentes`, um item com
    `gate: "UAT_incremento"` descrevendo o que foi entregue e como testar,
    em linguagem simples ("experimente cadastrar um item novo e ver se ele
@@ -270,12 +310,20 @@ verdadeira:
 6. Reprovou → devolva com evidência específica; se for a segunda falha na
    mesma tarefa, escale o modelo antes de tentar de novo; se esgotar o
    teto, pare e peça intervenção humana.
-7. Aprovou → commit, marque a tarefa concluída em TASKS.md, registre em
-   LOG_EXECUCAO.md (tarefa, modelo, tentativas, resultado).
+7. Aprovou → antes de marcar como concluída: se a implementação foi além
+   do que a spec relevante previa, acrescente o delta à spec correspondente
+   e registre a linha em specs/TRACEABILITY.md (ver "Sobre manter specs
+   sincronizadas com o código" acima — isso acontece só agora, depois da
+   fiscalização aprovar, nunca antes). Só então: commit, marque a tarefa
+   concluída em TASKS.md, registre em LOG_EXECUCAO.md (tarefa, modelo,
+   tentativas, resultado).
 8. Se esta tarefa completa um incremento visível pra pessoa (não apenas
-   técnico), abra o Gate de UAT antes de seguir pro próximo bloco de
-   trabalho (ver seção "Sobre os gates do PO" acima) — não prossiga sem
-   resolver esse gate.
+   técnico), confirme que toda tarefa do incremento já tem linha em
+   specs/TRACEABILITY.md antes de abrir o Gate de UAT — o gate assume
+   specs sincronizadas, não abra com pendência de rastreio. Depois disso,
+   abra o Gate de UAT antes de seguir pro próximo bloco de trabalho (ver
+   seção "Sobre os gates do PO" acima) — não prossiga sem resolver esse
+   gate.
 9. Se algo na spec se revelar ambíguo durante a implementação, pare,
    registre a ambiguidade e pergunte — não resolva por suposição.
 10. Repita a partir do passo 1 até o backlog esvaziar ou o usuário interromper.
