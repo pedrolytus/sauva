@@ -45,15 +45,20 @@ Todo acionamento desta skill começa pela mesma sequência, sem exceção:
    mecânica do projeto entre sessões — ele diz em qual fase o projeto está,
    o que já foi decidido, e o que está pendente. Nunca peça para a pessoa
    "te contar onde vocês pararam"; leia o estado primeiro. **Se o arquivo
-   não existir, crie-o agora** com os valores iniciais padrão (schema
-   completo em `references/07-estado.md`) antes de prosseguir — não assuma
-   que um instalador já fez isso por você. Isso é especialmente importante
-   quando a skill foi instalada globalmente (`--global`): nesse modo, nenhum
-   `.sauva/state.json` é criado antecipadamente em nenhum projeto, e é seu
-   trabalho criar um na primeira vez que alguém iniciar um projeto naquela
-   pasta. Depois de criado, trate como projeto novo — vá para a Fase 1.
+   NÃO existir, não o crie ainda e não comece a entrevista** — isso é sinal
+   de uma pasta que nunca foi confirmada como projeto sauva. Primeiro
+   confirme a intenção (ver "Confirmação antes de iniciar um projeto novo"
+   logo abaixo); só depois de confirmado você cria o arquivo com os valores
+   iniciais padrão (schema completo em `references/07-estado.md`). Isso é
+   especialmente importante quando a skill foi instalada globalmente
+   (`--global`): nesse modo ela fica ativa em QUALQUER pasta que a pessoa
+   abrir, e sem essa confirmação um comentário de passagem poderia disparar
+   a entrevista inteira por engano.
 2. Com base em `state.fase`, decida para onde ir:
-   - `nao_iniciado` ou arquivo ausente → se `state.modo` ainda for `null`,
+   - Arquivo ausente → siga "Confirmação antes de iniciar um projeto novo"
+     logo abaixo. Só depois de confirmado, crie o arquivo e continue como
+     `nao_iniciado` (próximo item).
+   - `nao_iniciado` (arquivo já existe) → se `state.modo` ainda for `null`,
      pergunte o modo de condução ANTES do Bloco 1 (ver "Modo de condução"
      logo abaixo) e grave a resposta em `state.modo` antes de prosseguir;
      só depois vá para a Fase 1.
@@ -78,6 +83,35 @@ Todo acionamento desta skill começa pela mesma sequência, sem exceção:
 encerrar sua resposta.** Isso é o que torna o projeto retomável a qualquer
 momento, em qualquer sessão nova, sem custo de recontextualização. Ver
 `references/07-estado.md` para o schema completo e exemplos de escrita.
+
+### Confirmação antes de iniciar um projeto novo (só quando `.sauva/state.json` não existe)
+
+Nunca trate qualquer menção a "projeto novo", "criar sistema", "definir
+escopo" etc. como pedido automático pra ativar o sauva ali — confirme
+antes de criar o estado e começar a entrevista:
+
+- Se a pessoa acionou explicitamente `/sauva` (ou variação como `/sauva
+  <algo>`), a intenção já é inequívoca — pule a confirmação e vá direto
+  pra pergunta de modo de condução.
+- Se a ativação veio de linguagem natural (a pessoa disse algo que bateu
+  com a descrição da skill, sem ter digitado `/sauva`), pergunte primeiro,
+  em linguagem simples e direta:
+
+  > "Você quer começar um projeto novo usando o sauva nesta pasta?"
+
+  - Resposta afirmativa (mesmo informal — "sim", "isso mesmo", "pode ser")
+    → crie `.sauva/state.json` agora com os valores iniciais padrão, e
+    siga pra pergunta de modo de condução.
+  - Resposta negativa, ambígua, ou a pessoa segue falando de outra coisa
+    → NÃO crie `.sauva/state.json`, não entre em Fase 1, responda
+    normalmente ao que ela pediu, e não repita a pergunta na mesma resposta.
+
+Essa confirmação existe pra evitar que a skill "sequestre" uma conversa
+que não tinha nada a ver com começar um projeto — risco real com a skill
+instalada globalmente (`--global`), onde ela fica ativa em qualquer pasta
+que a pessoa abrir no harness. Ela só acontece uma vez, na primeira
+menção; depois que `.sauva/state.json` existe, o projeto já está
+confirmado e as sessões seguintes retomam normalmente sem reperguntar.
 
 ### Modo de condução (perguntar antes do Bloco 1, uma única vez por projeto)
 
@@ -149,6 +183,10 @@ o mesmo modo depois do handoff.
   pessoa de que o escopo está fechado.
 - NUNCA encerre uma resposta sem atualizar `.sauva/state.json` se algo
   relevante mudou nesta interação.
+- NUNCA crie `.sauva/state.json` nem comece a Fase 1 sem antes confirmar a
+  intenção, quando a ativação veio de linguagem natural em vez de `/sauva`
+  explícito (ver "Confirmação antes de iniciar um projeto novo" acima) —
+  isso vale sobretudo com a skill instalada globalmente.
 
 ## Fluxo de Execução
 
