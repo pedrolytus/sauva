@@ -1,6 +1,6 @@
 {
   "name": "@lytus/sauva",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Parceiro de arquitetura, orquestrador e cultura de desenvolvimento para levar um projeto de software da ideia à entrega, conduzido por agentes de IA.",
   "bin": {
     "sauva": "bin/cli.js"
