@@ -51,6 +51,12 @@ automaticamente, sem precisar digitar `/sauva`:
 - "Continuar o desenvolvimento"
 - "Revisão geral" / "auditoria do projeto" / "o produto está conforme a spec?"
 
+Se `.sauva/state.json` ainda não existe nesta pasta e o gatilho veio de
+linguagem natural (não de `/sauva` explícito), o sauva confirma antes de
+agir — "Você quer começar um projeto novo usando o sauva nesta pasta?" —
+em vez de já iniciar a entrevista. `/sauva` explícito pula essa
+confirmação.
+
 ## Se `/sauva` não aparecer no menu de comandos
 
 Isso quase sempre acontece logo depois de uma instalação nova. O harness de

@@ -47,21 +47,31 @@ automaticamente:
 - "Continuar o desenvolvimento"
 - "Revisão geral", "auditoria do projeto", "o produto está conforme a spec?"
 
+**Confirmação de segurança:** se `.sauva/state.json` ainda não existe
+nesta pasta e o gatilho veio de linguagem natural (não de `/sauva`
+explícito), o sauva pergunta antes de agir — "Você quer começar um
+projeto novo usando o sauva nesta pasta?" — em vez de iniciar a entrevista
+direto. Isso evita que um comentário de passagem numa conversa sem relação
+dispare o sauva por engano, especialmente com a skill instalada
+globalmente (ativa em qualquer pasta). Responder "não" ou mudar de assunto
+não cria nenhum arquivo. Rodar `/sauva` explicitamente pula essa
+confirmação — a intenção já é clara pelo comando.
+
 ## Solução de problemas
 
 ### `/sauva` não aparece no menu de comandos
 
 Causa mais comum: o harness de IA só passa a vigiar um diretório de skills
 recém-criado (`.claude/skills/`, `.agents/skills/` etc.) na **inicialização
-da sessão**. Se você rodou `npx @lytus/sauva install` com a sessão do
-assistente já aberta, ele não vai enxergar o diretório novo até você
+da sessão**. Se você rodou `npx @lytus/sauva@latest install` com a sessão
+do assistente já aberta, ele não vai enxergar o diretório novo até você
 reiniciar.
 
 **Solução:** saia da sessão do harness (Claude Code, Codex, Antigravity) e
 abra de novo na mesma pasta.
 
 Se persistir depois de reiniciar, confira:
-1. Você está na mesma pasta onde rodou o `install`? (`npx @lytus/sauva
+1. Você está na mesma pasta onde rodou o `install`? (`npx @lytus/sauva@latest
    status` deve reconhecer o projeto.)
 2. O diretório `.claude/skills/sauva/SKILL.md` (ou `.agents/skills/sauva/SKILL.md`,
    dependendo do harness) existe de fato?
