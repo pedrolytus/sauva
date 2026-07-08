@@ -49,7 +49,10 @@ No modo global, o estado de cada projeto continua sendo criado individualmente �
 ```bash
 npx @lytus/sauva status              # em que fase o projeto atual está
 npx @lytus/sauva update [--global]   # atualiza os agentes (preserva customizações)
+npx @lytus/sauva uninstall [--global] # remove os arquivos de skill instalados
 ```
+
+Lista completa de comandos (CLI e os que rodam dentro da conversa, como `/sauva` e `/sauva-help`): veja [COMANDOS.md](./COMANDOS.md).
 
 Prefere digitar sem `npx` toda vez? Instale a CLI globalmente uma única vez:
 ```bash
@@ -64,6 +67,8 @@ Depois de instalado, abra a pasta no seu harness de IA e diga:
 ou, se já existe um projeto em andamento:
 
 > "Continuar o desenvolvimento"
+
+Também dá pra acionar direto com `/sauva`, ou ver todos os comandos disponíveis com `/sauva-help`. Se `/sauva` não aparecer logo após instalar, reinicie a sessão do harness — ele só passa a vigiar um diretório de skills novo na inicialização (detalhes em [COMANDOS.md](./COMANDOS.md#solução-de-problemas)).
 
 ## O que é instalado
 

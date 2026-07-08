@@ -10,6 +10,7 @@ const prompts = require("prompts");
 const TEMPLATES_DIR = path.join(__dirname, "..", "templates");
 const CWD = process.cwd();
 const HOME = os.homedir();
+const SKILL_NAMES = ["sauva", "sauva-help"];
 
 // ---------- modo (local vs global) e flags ----------
 
@@ -118,13 +119,13 @@ function readPreviousSelection(manifest) {
   }
 }
 
-async function promptHarnessSelection(harnesses) {
+async function promptHarnessSelection(harnesses, message) {
   console.log("");
   const response = await prompts(
     {
       type: "multiselect",
       name: "selected",
-      message: "Quais harnesses de IA você quer instalar o sauva?",
+      message: message || "Quais harnesses de IA você quer instalar o sauva?",
       hint: "Espaço marca, 'a' marca/desmarca todos, Enter confirma",
       choices: harnesses.map((h) => ({
         title: h.label + (h.detected ? " (detectado)" : ""),
@@ -134,7 +135,7 @@ async function promptHarnessSelection(harnesses) {
     },
     {
       onCancel: () => {
-        console.log("\nInstalação cancelada.");
+        console.log("\nOperação cancelada.");
         process.exit(1);
       }
     }
@@ -278,9 +279,11 @@ async function cmdInstall() {
 
   const targets = getInstallTargets(selectedHarnesses);
   for (const target of targets) {
-    const { written, skipped } = installSkillInto("sauva", target.root, manifest);
-    console.log(`  ${target.name}/sauva/  → ${written} arquivo(s) instalado(s)` +
-      (skipped ? `, ${skipped} preservado(s) por customização` : ""));
+    for (const skillName of SKILL_NAMES) {
+      const { written, skipped } = installSkillInto(skillName, target.root, manifest);
+      console.log(`  ${target.name}/${skillName}/  → ${written} arquivo(s) instalado(s)` +
+        (skipped ? `, ${skipped} preservado(s) por customização` : ""));
+    }
   }
 
   const selectedIds = selectedHarnesses.map((h) => h.id);
@@ -288,6 +291,11 @@ async function cmdInstall() {
     manifest.__harnesses_alvo = selectedIds;
   }
   saveManifest(manifest);
+
+  const restartNote =
+    "Se /sauva não aparecer no menu de comandos, reinicie a sessão do seu\n" +
+    "assistente de IA (saia e abra de novo) — o harness só passa a vigiar um\n" +
+    "diretório de skills recém-criado na inicialização da sessão.";
 
   if (isGlobal) {
     console.log("\nInstalado globalmente. A skill `sauva` fica disponível em QUALQUER");
@@ -299,6 +307,7 @@ async function cmdInstall() {
     console.log("Antigravity (~/.gemini/config/skills/). Codex CLI ainda não tem uma");
     console.log("convenção global de skills documentada — para ele, instale localmente");
     console.log("(sem --global) em cada projeto.\n");
+    console.log(restartNote + "\n");
     return;
   }
 
@@ -325,6 +334,7 @@ async function cmdInstall() {
 
   console.log("\nPronto. Abra este projeto no seu assistente de IA e diga:");
   console.log('  "Quero começar um projeto novo"\n');
+  console.log(restartNote + "\n");
 }
 
 async function cmdUpdate() {
@@ -336,6 +346,72 @@ async function cmdUpdate() {
   console.log(`sauva — atualizando (${isGlobal ? "global" : "local"}) para a versão mais recente...\n`);
   console.log("Arquivos que você personalizou não serão sobrescritos.\n");
   await cmdInstall();
+}
+
+async function cmdUninstall() {
+  console.log(`sauva — desinstalando (${isGlobal ? "global" : "local, nesta pasta"})...\n`);
+
+  const manifest = loadManifest();
+  const detected = detectHarnesses();
+  const installedIds = readPreviousSelection(manifest);
+
+  let toRemove;
+  if (explicitHarnessIds) {
+    toRemove = detected.filter((h) => explicitHarnessIds.includes(h.id));
+  } else if (!installedIds || installedIds.length === 0) {
+    console.log("Nenhuma seleção de harness conhecida para este escopo.");
+    console.log("Use --harness=claude-code,codex,antigravity pra especificar manualmente,");
+    console.log("ou remova os diretórios de skill à mão.");
+    return;
+  } else if (yesFlag || !process.stdin.isTTY) {
+    toRemove = detected.filter((h) => installedIds.includes(h.id));
+  } else {
+    toRemove = await promptHarnessSelection(
+      detected.map((h) => ({ ...h, detected: installedIds.includes(h.id) })),
+      "Quais harnesses você quer desinstalar o sauva?"
+    );
+  }
+
+  if (!toRemove || toRemove.length === 0) {
+    console.log("Nada selecionado — nenhuma remoção feita.");
+    return;
+  }
+
+  const targets = getInstallTargets(toRemove);
+  let removedAny = false;
+  for (const target of targets) {
+    for (const skillName of SKILL_NAMES) {
+      const skillDir = path.join(target.root, skillName);
+      if (fs.existsSync(skillDir)) {
+        fs.rmSync(skillDir, { recursive: true, force: true });
+        console.log(`  - ${target.name}/${skillName}/  removido`);
+        removedAny = true;
+      }
+      const prefix = path.relative(WORK_ROOT, skillDir).split(path.sep).join("/");
+      for (const key of Object.keys(manifest)) {
+        if (key.startsWith(prefix)) delete manifest[key];
+      }
+    }
+  }
+
+  const removedIds = toRemove.map((h) => h.id);
+  const remainingIds = installedIds.filter((id) => !removedIds.includes(id));
+  if (isGlobal) {
+    manifest.__harnesses_alvo = remainingIds;
+    saveManifest(manifest);
+  } else {
+    saveManifest(manifest);
+    persistSelectionInExistingState(remainingIds);
+  }
+
+  if (!removedAny) {
+    console.log("Nenhum diretório de skill encontrado pra remover (talvez já tenha sido removido antes).");
+  }
+
+  console.log("\nMantidos de propósito (não removidos automaticamente):");
+  console.log("  .sauva/state.json      — histórico e progresso do projeto");
+  console.log("  CLAUDE.md, AGENTS.md   — podem ter conteúdo seu além do sauva");
+  console.log("Remova manualmente se quiser apagar tudo.\n");
 }
 
 function cmdStatus() {
@@ -380,20 +456,27 @@ function cmdStatus() {
 function cmdHelp() {
   console.log(`sauva — uso:
 
-  npx @lytus/sauva install             instala neste projeto (local)
-  npx @lytus/sauva install --global    instala uma vez, disponível em qualquer projeto
-  npx @lytus/sauva update [--global]   atualiza preservando customizações
-  npx @lytus/sauva status              mostra em que fase o projeto atual está
+  npx @lytus/sauva install               instala neste projeto (local)
+  npx @lytus/sauva install --global      instala uma vez, disponível em qualquer projeto
+  npx @lytus/sauva update [--global]     atualiza preservando customizações
+  npx @lytus/sauva status                mostra em que fase o projeto atual está
+  npx @lytus/sauva uninstall [--global]  remove os arquivos de skill instalados
 
 Seleção de harness (Claude Code, Codex, Antigravity):
-  --harness=claude-code,codex   instala só nos harnesses listados, sem perguntar
-  -y, --yes                    aceita os harnesses detectados automaticamente
+  --harness=claude-code,codex   instala/desinstala só nos harnesses listados, sem perguntar
+  -y, --yes                    aceita os harnesses detectados/já instalados, sem perguntar
 
 Sem essas flags, o instalador detecta o que está instalado na sua máquina e
 pergunta interativamente quais harnesses você quer usar (Enter aceita os
 detectados). Em ambientes não-interativos (scripts, CI), o comportamento de
 -y é usado automaticamente. Rodar "update" reaproveita a seleção feita no
-último "install", sem perguntar de novo.
+último "install", sem perguntar de novo. "uninstall" nunca apaga
+.sauva/state.json nem CLAUDE.md/AGENTS.md — só os arquivos de skill.
+
+Dentro da conversa com o harness de IA, use /sauva pra acionar a skill
+diretamente e /sauva-help pra ver a lista completa de comandos (inclusive
+os que só existem dentro da conversa, não no terminal). Veja também
+COMANDOS.md no repositório do sauva.
 
 Dica: com "npm install -g @lytus/sauva" feito uma vez, você pode digitar
 apenas "sauva install" (sem "npx") de qualquer lugar depois disso.
@@ -410,6 +493,9 @@ async function main() {
       break;
     case "update":
       await cmdUpdate();
+      break;
+    case "uninstall":
+      await cmdUninstall();
       break;
     case "status":
       cmdStatus();
