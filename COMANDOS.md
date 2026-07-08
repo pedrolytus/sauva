@@ -5,21 +5,26 @@ conversa com o harness de IA.
 
 ## CLI (terminal)
 
+Sempre use a tag `@latest` explícita (`npx @lytus/sauva@latest <comando>`),
+não `npx @lytus/sauva <comando>` sem versão — ver
+[Solução de problemas](#solução-de-problemas) pra entender por quê.
+
 | Comando | O que faz |
 |---|---|
-| `npx @lytus/sauva install` | Instala neste projeto (local). Detecta harnesses de IA instalados na máquina e pergunta interativamente quais você quer usar (Enter aceita os detectados). |
-| `npx @lytus/sauva install --global` | Instala uma vez, disponível em qualquer projeto que você abrir depois. O `.sauva/state.json` de cada projeto continua sendo criado individualmente. |
-| `npx @lytus/sauva install --harness=claude-code,codex` | Instala só nos harnesses listados, sem prompt interativo. IDs válidos: `claude-code`, `codex`, `antigravity`. |
-| `npx @lytus/sauva install -y` / `--yes` | Aceita os harnesses detectados automaticamente, sem perguntar. Usado automaticamente em ambientes não-interativos (scripts, CI). |
-| `npx @lytus/sauva update [--global]` | Atualiza os agentes para a versão mais recente. Arquivos que você personalizou (hash diferente do template original) nunca são sobrescritos. Reaproveita a seleção de harness feita no último `install`, sem perguntar de novo. |
-| `npx @lytus/sauva status` | Mostra projeto, fase, modo de condução (Autopilot/Mentor/Dev), último passo, harnesses instalados e aprovações pendentes. |
-| `npx @lytus/sauva uninstall [--global]` | Remove os diretórios de skill instalados (`sauva` e `sauva-help`) dos harnesses selecionados. **Nunca apaga** `.sauva/state.json` (progresso do projeto) nem `CLAUDE.md`/`AGENTS.md` (podem ter conteúdo seu além do sauva) — esses ficam pra remoção manual, se você quiser. |
-| `npx @lytus/sauva uninstall --harness=codex` | Desinstala só do harness listado, sem perguntar. |
-| `npx @lytus/sauva` (sem argumento), `--help`, `-h` | Mostra a ajuda do CLI. |
+| `npx @lytus/sauva@latest install` | Instala neste projeto (local). Detecta harnesses de IA instalados na máquina e pergunta interativamente quais você quer usar (Enter aceita os detectados). |
+| `npx @lytus/sauva@latest install --global` | Instala uma vez, disponível em qualquer projeto que você abrir depois. O `.sauva/state.json` de cada projeto continua sendo criado individualmente. |
+| `npx @lytus/sauva@latest install --harness=claude-code,codex` | Instala só nos harnesses listados, sem prompt interativo. IDs válidos: `claude-code`, `codex`, `antigravity`. |
+| `npx @lytus/sauva@latest install -y` / `--yes` | Aceita os harnesses detectados automaticamente, sem perguntar. Usado automaticamente em ambientes não-interativos (scripts, CI). |
+| `npx @lytus/sauva@latest update [--global]` | Atualiza os agentes para a versão mais recente. Arquivos que você personalizou (hash diferente do template original) nunca são sobrescritos. Reaproveita a seleção de harness feita no último `install`, sem perguntar de novo. |
+| `npx @lytus/sauva@latest status` | Mostra projeto, fase, modo de condução (Autopilot/Mentor/Dev), último passo, harnesses instalados e aprovações pendentes. |
+| `npx @lytus/sauva@latest uninstall [--global]` | Remove os diretórios de skill instalados (`sauva` e `sauva-help`) dos harnesses selecionados. **Nunca apaga** `.sauva/state.json` (progresso do projeto) nem `CLAUDE.md`/`AGENTS.md` (podem ter conteúdo seu além do sauva) — esses ficam pra remoção manual, se você quiser. |
+| `npx @lytus/sauva@latest uninstall --harness=codex` | Desinstala só do harness listado, sem perguntar. |
+| `npx @lytus/sauva@latest` (sem argumento), `--help`, `-h` | Mostra a ajuda do CLI. |
 
 Se você instalou a CLI globalmente com `npm install -g @lytus/sauva`, todos
-os comandos acima funcionam sem o `npx` na frente: `sauva install`, `sauva
-status`, etc.
+os comandos acima também funcionam sem o `npx` na frente: `sauva install`,
+`sauva status`, etc. — mas veja a nota do Windows abaixo antes de depender
+disso.
 
 ## Dentro da conversa com o harness de IA
 
@@ -66,5 +71,32 @@ Se persistir depois de reiniciar, confira:
 
 ### `npx @lytus/sauva update` diz que não há instalação
 
-Rode primeiro `npx @lytus/sauva install` (local) ou `--global`, conforme o
-escopo que você quer atualizar — `update` não instala do zero.
+Rode primeiro `npx @lytus/sauva@latest install` (local) ou `--global`,
+conforme o escopo que você quer atualizar — `update` não instala do zero.
+Confirme também que você está na mesma pasta onde rodou o `install` — o
+repositório-fonte do próprio sauva (se você clonou o projeto) nunca é um
+alvo de instalação, só as pastas onde você rodou o CLI.
+
+### Windows: `sauva` "não é reconhecido como um comando" (mesmo instalado globalmente)
+
+Depois de `npm install -g @lytus/sauva`, o comando `sauva` (sem `npx` na
+frente) depende da pasta global de binários do npm estar no PATH do
+Windows — e em muitas instalações não está, mesmo com o pacote instalado
+corretamente.
+
+**Solução mais simples:** não dependa do comando direto — use sempre `npx
+@lytus/sauva@latest <comando>` (funciona independente do PATH, porque o
+npx sabe onde procurar o pacote global sozinho).
+
+**Solução permanente (opcional):** rode `npm config get prefix` pra achar
+sua pasta global do npm, e adicione ela ao PATH do Windows (Configurações
+→ Sistema → Variáveis de Ambiente).
+
+### Windows: `npx @lytus/sauva update` falha, mas `npx @lytus/sauva@latest update` funciona
+
+Isso já é a causa, não só o sintoma: `npx @lytus/sauva` **sem** a tag de
+versão pode resolver de forma ambígua pelo cache do npx em algumas
+instalações Windows, e falhar com um erro de shell tipo `'sauva' não é
+reconhecido...` (um erro do `cmd.exe`, não do npm). Sempre inclua
+`@latest` explicitamente — é a forma recomendada em toda esta referência,
+não um workaround pontual.

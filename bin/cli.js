@@ -307,6 +307,14 @@ async function cmdInstall() {
     console.log("Antigravity (~/.gemini/config/skills/). Codex CLI ainda não tem uma");
     console.log("convenção global de skills documentada — para ele, instale localmente");
     console.log("(sem --global) em cada projeto.\n");
+    if (process.platform === "win32") {
+      console.log("Nota Windows: se o comando `sauva` (sem npx) não for reconhecido depois");
+      console.log("de instalar globalmente com \"npm install -g @lytus/sauva\", a pasta global");
+      console.log("de binários do npm provavelmente não está no PATH do sistema. Enquanto não");
+      console.log("resolver isso, use sempre `npx @lytus/sauva@latest <comando>` — com a tag");
+      console.log("@latest explícita, não só `npx @lytus/sauva`, que pode resolver de forma");
+      console.log("ambígua pelo cache do npx em algumas instalações Windows.\n");
+    }
     console.log(restartNote + "\n");
     return;
   }
@@ -456,11 +464,11 @@ function cmdStatus() {
 function cmdHelp() {
   console.log(`sauva — uso:
 
-  npx @lytus/sauva install               instala neste projeto (local)
-  npx @lytus/sauva install --global      instala uma vez, disponível em qualquer projeto
-  npx @lytus/sauva update [--global]     atualiza preservando customizações
-  npx @lytus/sauva status                mostra em que fase o projeto atual está
-  npx @lytus/sauva uninstall [--global]  remove os arquivos de skill instalados
+  npx @lytus/sauva@latest install               instala neste projeto (local)
+  npx @lytus/sauva@latest install --global      instala uma vez, disponível em qualquer projeto
+  npx @lytus/sauva@latest update [--global]     atualiza preservando customizações
+  npx @lytus/sauva@latest status                mostra em que fase o projeto atual está
+  npx @lytus/sauva@latest uninstall [--global]  remove os arquivos de skill instalados
 
 Seleção de harness (Claude Code, Codex, Antigravity):
   --harness=claude-code,codex   instala/desinstala só nos harnesses listados, sem perguntar
@@ -478,8 +486,14 @@ diretamente e /sauva-help pra ver a lista completa de comandos (inclusive
 os que só existem dentro da conversa, não no terminal). Veja também
 COMANDOS.md no repositório do sauva.
 
+Sempre use a tag @latest (ex.: "npx @lytus/sauva@latest install") em vez de
+"npx @lytus/sauva" sem versão — em algumas instalações Windows, o npx sem
+tag de versão explícita resolve pelo cache de forma ambígua e falha.
+
 Dica: com "npm install -g @lytus/sauva" feito uma vez, você pode digitar
-apenas "sauva install" (sem "npx") de qualquer lugar depois disso.
+apenas "sauva install" (sem "npx") de qualquer lugar depois disso — se o
+comando não for reconhecido, a pasta global de binários do npm pode não
+estar no PATH do seu sistema; nesse caso, prefira sempre o "npx ...@latest".
 `);
 }
 

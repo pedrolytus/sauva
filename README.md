@@ -5,7 +5,7 @@
 Instala em segundos, sem configuração manual:
 
 ```bash
-npx @lytus/sauva install
+npx @lytus/sauva@latest install
 ```
 
 O instalador detecta quais harnesses de IA (Claude Code, Codex, Antigravity) já estão na sua máquina e pergunta em quais você quer instalar — Enter aceita os detectados automaticamente. Isso cria a skill `sauva` no(s) harness(es) escolhido(s), e um arquivo de estado que torna qualquer projeto retomável, em qualquer sessão nova, sem precisar reexplicar onde vocês pararam.
@@ -36,21 +36,23 @@ A pessoa dona do projeto mantém dois gates formais que nenhum agente pula: apro
 
 **Local** — instala só neste projeto (recomendado pra começar):
 ```bash
-npx @lytus/sauva install
+npx @lytus/sauva@latest install
 ```
 
 **Global** — instala uma vez, fica disponível em qualquer projeto que você abrir depois, sem precisar rodar o instalador de novo em cada pasta:
 ```bash
-npx @lytus/sauva install --global
+npx @lytus/sauva@latest install --global
 ```
 No modo global, o estado de cada projeto continua sendo criado individualmente — a skill cria o `.sauva/state.json` sozinha na primeira vez que você iniciar um projeto naquela pasta.
 
 **Outros comandos:**
 ```bash
-npx @lytus/sauva status              # em que fase o projeto atual está
-npx @lytus/sauva update [--global]   # atualiza os agentes (preserva customizações)
-npx @lytus/sauva uninstall [--global] # remove os arquivos de skill instalados
+npx @lytus/sauva@latest status              # em que fase o projeto atual está
+npx @lytus/sauva@latest update [--global]   # atualiza os agentes (preserva customizações)
+npx @lytus/sauva@latest uninstall [--global] # remove os arquivos de skill instalados
 ```
+
+Sempre use a tag `@latest` explícita — `npx @lytus/sauva` sem versão pode resolver de forma ambígua pelo cache do npx em algumas instalações Windows (veja [Solução de problemas](./COMANDOS.md#solução-de-problemas)).
 
 Lista completa de comandos (CLI e os que rodam dentro da conversa, como `/sauva` e `/sauva-help`): veja [COMANDOS.md](./COMANDOS.md).
 
@@ -59,6 +61,9 @@ Prefere digitar sem `npx` toda vez? Instale a CLI globalmente uma única vez:
 npm install -g @lytus/sauva
 sauva install --global
 ```
+No Windows, se depois disso o comando `sauva` não for reconhecido, a pasta
+global de binários do npm provavelmente não está no PATH do sistema —
+enquanto não resolver isso, use `npx @lytus/sauva@latest` no lugar de `sauva`.
 
 Depois de instalado, abra a pasta no seu harness de IA e diga:
 

@@ -15,19 +15,24 @@ inventar uma sintaxe plausível.
 
 ## CLI (terminal, fora da conversa)
 
+Use sempre a tag `@latest` explícita — `npx @lytus/sauva` sem versão pode
+resolver de forma ambígua pelo cache do npx em algumas instalações Windows.
+
 | Comando | O que faz |
 |---|---|
-| `npx @lytus/sauva install` | Instala neste projeto (local). Detecta harnesses de IA instalados e pergunta quais usar. |
-| `npx @lytus/sauva install --global` | Instala uma vez, disponível em qualquer projeto depois. |
-| `npx @lytus/sauva install --harness=claude-code,codex` | Instala só nos harnesses listados, sem perguntar. |
-| `npx @lytus/sauva install -y` | Aceita os harnesses detectados automaticamente, sem perguntar. |
-| `npx @lytus/sauva update [--global]` | Atualiza os agentes pra versão mais recente, preservando customizações. |
-| `npx @lytus/sauva status` | Mostra fase, modo de condução e harnesses do projeto atual. |
-| `npx @lytus/sauva uninstall [--global] [--harness=...]` | Remove os arquivos de skill instalados. Nunca apaga `.sauva/state.json` nem `CLAUDE.md`/`AGENTS.md` automaticamente. |
-| `npx @lytus/sauva` (sem argumento) ou `--help` | Mostra a ajuda do CLI. |
+| `npx @lytus/sauva@latest install` | Instala neste projeto (local). Detecta harnesses de IA instalados e pergunta quais usar. |
+| `npx @lytus/sauva@latest install --global` | Instala uma vez, disponível em qualquer projeto depois. |
+| `npx @lytus/sauva@latest install --harness=claude-code,codex` | Instala só nos harnesses listados, sem perguntar. |
+| `npx @lytus/sauva@latest install -y` | Aceita os harnesses detectados automaticamente, sem perguntar. |
+| `npx @lytus/sauva@latest update [--global]` | Atualiza os agentes pra versão mais recente, preservando customizações. |
+| `npx @lytus/sauva@latest status` | Mostra fase, modo de condução e harnesses do projeto atual. |
+| `npx @lytus/sauva@latest uninstall [--global] [--harness=...]` | Remove os arquivos de skill instalados. Nunca apaga `.sauva/state.json` nem `CLAUDE.md`/`AGENTS.md` automaticamente. |
+| `npx @lytus/sauva@latest` (sem argumento) ou `--help` | Mostra a ajuda do CLI. |
 
-Se instalado globalmente com `npm install -g @lytus/sauva`, todos os
-comandos acima também funcionam sem o `npx` na frente (ex.: `sauva install`).
+Se instalado globalmente com `npm install -g @lytus/sauva`, os comandos
+acima também funcionam sem o `npx` na frente (ex.: `sauva install`) — mas
+no Windows isso depende do PATH ter a pasta global do npm; se `sauva`
+sozinho não for reconhecido, volte a usar `npx @lytus/sauva@latest`.
 
 ## Dentro da conversa com o harness de IA
 

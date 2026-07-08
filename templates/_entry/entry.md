@@ -38,10 +38,13 @@ specs/                      # criado pela sauva na primeira conversa
 ## Comandos úteis
 
 ```
-npx @lytus/sauva status      # mostra em que fase o projeto está
-npx @lytus/sauva update      # atualiza os agentes para a versão mais recente
-npx @lytus/sauva uninstall   # remove os arquivos de skill instalados
+npx @lytus/sauva@latest status      # mostra em que fase o projeto está
+npx @lytus/sauva@latest update      # atualiza os agentes para a versão mais recente
+npx @lytus/sauva@latest uninstall   # remove os arquivos de skill instalados
 ```
+
+Use sempre a tag `@latest` explícita — em algumas instalações Windows,
+`npx @lytus/sauva` sem versão resolve de forma ambígua pelo cache do npx.
 
 Lista completa de comandos: COMANDOS.md no repositório do sauva
 (https://github.com/pedrolytus/sauva).
