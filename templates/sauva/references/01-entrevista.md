@@ -96,16 +96,42 @@ cadastro'."
 - Internamente, cada regra vira uma linha numerada (R1, R2...) em
   `RULES.md` — isso é trabalho seu, não precisa aparecer na conversa.
 
-## Bloco 6 — Dados sensíveis e privacidade (se aplicável) → `RULES.md` / `SECURITY.md`
+## Bloco 6 — Dados sensíveis, alcance e nível de segurança → `RULES.md` / `SECURITY.md`
+Este bloco NUNCA é pulado, mesmo em projeto pequeno — é aqui que se decide
+o nível de segurança do projeto (ver `references/09-seguranca.md`). O
+Nível Essencial (nunca commitar segredo, validar entrada, senha com hash
+forte, HTTPS etc.) se aplica sempre, em qualquer projeto, sem perguntar —
+isso é decisão sua, não da pessoa. Este bloco existe pra decidir se o
+projeto também precisa do Nível Reforçado (MFA, rate limiting, auditoria
+de acesso — coisas com custo real de atrito, só valem a pena quando o
+risco justifica).
+
 **Diga assim:** "Esse app vai guardar informação pessoal de alguém — nome,
 CPF, endereço, dados de saúde, cartão de crédito? Precisa que só a própria
-pessoa veja o que é dela, ou todo mundo vê tudo?"
-- Se a resposta for "não sei" ou "acho que não", ajude com exemplos
-  concretos até ter certeza — pessoas leigas frequentemente não percebem
-  que um campo de "telefone" já é dado sensível.
-- Se realmente não houver nada sensível, registre isso explicitamente em
-  `RULES.md` em vez de simplesmente pular a seção — uma ausência
-  documentada é diferente de uma pergunta que nunca foi feita.
+pessoa veja o que é dela, ou todo mundo vê tudo?" seguido de "isso vai
+ficar só com você (ou um grupo pequeno de confiança), ou algum dia
+estranhos na internet vão poder usar?" e "isso já é pra valer — gente de
+fora vai depender disso — ou é mais um teste/protótipo por enquanto?"
+
+- Se a resposta for "não sei" ou "acho que não" sobre dado sensível, ajude
+  com exemplos concretos até ter certeza — pessoas leigas frequentemente
+  não percebem que um campo de "telefone" já é dado sensível.
+- Classifique o nível de segurança com base nas três respostas (dado
+  sensível de terceiros, exposição pública, dinheiro envolvido): qualquer
+  sinal positivo → Nível Reforçado também se aplica, além do Essencial.
+  Nenhum sinal → só o Essencial, e é suficiente; não force o Reforçado "pra
+  garantir" — isso teria custo de atrito sem risco real que justifique.
+- Se o Reforçado se aplicar, crie `specs/SECURITY.md` (template em
+  `references/02-templates-specs.md`). Se não se aplicar, registre isso
+  explicitamente em `RULES.md` (seção Segurança) em vez de simplesmente
+  pular — uma ausência documentada é diferente de uma pergunta que nunca
+  foi feita, e o Essencial continua lá de qualquer forma.
+- Se a pessoa disser que o projeto já vai (ou logo vai) pro mercado real
+  com usuários de fora e dinheiro/dado sensível em escala, registre isso
+  em `PRD.md` (riscos) como gatilho futuro de auditoria de segurança
+  externa — ver "Sinal de 'hora de subir pra segurança de produção real'"
+  em `references/09-seguranca.md`. Não force esse nível mais alto agora se
+  o projeto ainda é validação/protótipo.
 
 ## Bloco 7 — Como vai ser construído por dentro → `ARCHITECTURE.md` / `TECH_STACK.md` / `DEPLOY.md`
 **Diga assim:** não pergunte tecnologia diretamente pra quem não é técnico

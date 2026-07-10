@@ -100,10 +100,12 @@ tarefa em questão — não a spec inteira a cada vez. Para implementação de
 domínio: ARCHITECTURE.md + RULES.md. Para endpoints: API_SPEC.md. Para
 dados: DATABASE_SCHEMA.md. Para deploy: DEPLOY.md + SECURITY.md. Para
 qualquer tarefa: TESTS_SPEC.md, AGENTS.md (restrições de comportamento
-valem sempre) e specs/TRACEABILITY.md (pra saber o que já foi mapeado e
-não duplicar rastreio). Para decidir modelo e formato de sub-agente: leia
-specs/MODEL_ROUTING.md (política de roteamento entregue junto com este
-rascunho — ver Parte 3 deste documento).
+valem sempre), specs/TRACEABILITY.md (pra saber o que já foi mapeado e
+não duplicar rastreio) e o Nível Essencial de
+`references/09-seguranca.md` (aplica-se a TODA tarefa, não só às de
+segurança — ver "Sobre segurança" abaixo). Para decidir modelo e formato
+de sub-agente: leia specs/MODEL_ROUTING.md (política de roteamento
+entregue junto com este rascunho — ver Parte 3 deste documento).
 
 ## Regras
 
@@ -179,6 +181,23 @@ que continuam batendo com o que existe de verdade. Esse alguém é você.
   sub-agente.
 - NUNCA altere um teste para fazê-lo passar sem aprovação humana explícita —
   o teste é o contrato, não um obstáculo.
+
+### Sobre segurança (Nível Essencial — regra inviolável, sem exceção de modo)
+O Nível Essencial de `references/09-seguranca.md` (nunca commitar
+segredo, validar entrada, hash forte de senha, HTTPS, dependência
+auditada, erro nunca expõe detalhe interno, etc.) já está registrado como
+regras numeradas em `RULES.md`, seção Segurança — aplique em TODA tarefa
+que tocar código, não só nas tarefas explicitamente marcadas como
+"segurança". Isso não é modulado por `state.modo`: é invisível pra pessoa
+dona do projeto e não tem custo de atrito, então não existe "versão mais
+rápida" que pule isso — pular não economiza tempo real, só transfere o
+custo pra um incidente depois.
+
+Se `specs/SECURITY.md` existir (Nível Reforçado confirmado no Bloco 6 da
+entrevista), aplique também os controles daquele arquivo — esses sim têm
+custo real de atrito (MFA, rate limiting, auditoria de acesso), e por
+isso só existem quando o arquivo existir, nunca por iniciativa sua sem
+essa confirmação prévia da pessoa.
 
 ### Sobre delegação e sub-agentes
 - Prefira delegar a implementar diretamente. Implemente você mesmo(a) só
@@ -263,7 +282,12 @@ localmente"), monte o checklist de go/no-go a partir da seção "Checklist de
 go/no-go" de `specs/DEPLOY.md` (adaptado, se algum item não se aplicar) e
 inclua-o na descrição do item registrado com `gate: "DEPLOY"` em
 `aprovacoes_pendentes` — não pergunte apenas "posso publicar?" sem
-contexto verificável. Se `specs/DEPLOY.md` não existir, pare e recomende
+contexto verificável. Esse checklist inclui, sem exceção, a confirmação do
+Nível Essencial de segurança (sem segredo commitado, dependências
+auditadas — ver `references/09-seguranca.md`); se `specs/SECURITY.md`
+existir (Nível Reforçado), inclua também a confirmação de que o sub-agente
+`security-<projeto>` revisou os controles daquele arquivo antes deste
+gate abrir. Se `specs/DEPLOY.md` não existir, pare e recomende
 retomar a skill sauva para preenchê-lo antes de prosseguir para publicação
 — não crie um checklist ad-hoc por conta própria. Peça confirmação
 explícita e nomeada — "posso publicar agora?" — não avance com base em uma
@@ -293,6 +317,15 @@ verdadeira:
 - Você está prestes a alternar entre dois modos de trabalho muito diferentes
   na mesma sessão (ex.: lógica de domínio vs. infraestrutura de deploy) e
   separar reduz erro de contexto cruzado.
+
+Caso específico: se `specs/SECURITY.md` existir (Nível Reforçado), crie um
+sub-agente `security-<projeto>` — a área concentra julgamento denso o
+suficiente (modelo de ameaças, MFA, auditoria de acesso) pra justificar
+foco isolado, ao contrário do Nível Essencial, que qualquer sub-agente
+aplica sozinho como rotina (ver "Sobre segurança" acima). Entregue a ele
+`SECURITY.md` + `RULES.md` (seção Segurança) como contexto, e acione-o
+antes do Gate de go/no-go de deploy pra revisar os controles do Nível
+Reforçado.
 
 ## Fluxo de Execução
 1. Leia TASKS.md e specs/LOG_EXECUCAO.md (se existir). Escolha a próxima

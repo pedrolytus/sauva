@@ -20,7 +20,7 @@ projeto/
     API_SPEC.md
     DATABASE_SCHEMA.md
     TESTS_SPEC.md
-    SECURITY.md
+    SECURITY.md            # só se o Bloco 6 confirmar Nível Reforçado — Nível Essencial vive em RULES.md
     DEPLOY.md              # pule se o projeto nunca for publicado/implantado fora da máquina de quem cria
     AGENTS.md
     TASKS.md
@@ -75,7 +75,11 @@ R1. <regra numerada, verificável>
 R2. <regra numerada, verificável>
 
 ## Segurança
-S1. <regra numerada, verificável>
+S1. Nenhum segredo (API key, senha, token) em texto puro no repositório.
+S2. Toda entrada externa é validada/sanitizada antes de uso.
+S3. Senha de usuário é armazenada com hash forte (bcrypt/argon2/scrypt).
+<continue com o restante do Nível Essencial de references/09-seguranca.md
+que se aplicar à stack — nunca deixe essa seção vazia>
 
 ## Performance
 P1. <regra numerada, verificável>
@@ -85,7 +89,12 @@ C1. <regra numerada, verificável>
 ```
 
 Cada regra precisa ser citável por identificador (ex.: "valida R3") e
-testável objetivamente — nada de regra vaga tipo "deve ser seguro".
+testável objetivamente — nada de regra vaga tipo "deve ser seguro". A
+seção Segurança recebe o Nível Essencial de `references/09-seguranca.md`
+como regras numeradas em TODO projeto, sem exceção e sem precisar
+perguntar à pessoa — ver Bloco 6 da entrevista. Se o Bloco 6 confirmar
+Nível Reforçado, acrescente as regras correspondentes aqui também, além
+de criar `SECURITY.md`.
 
 ---
 
@@ -234,19 +243,32 @@ testável objetivamente — nada de regra vaga tipo "deve ser seguro".
 
 ---
 
-## SECURITY.md (apenas se aplicável)
+## SECURITY.md (só se o Bloco 6 confirmar Nível Reforçado — ver `references/09-seguranca.md`)
+
+O Nível Essencial (sempre aplicado) vive como regras numeradas em
+`RULES.md`, seção Segurança — não precisa deste arquivo. `SECURITY.md` só
+existe quando há risco real confirmado: dado sensível de terceiros,
+exposição pública com usuários externos, ou dinheiro envolvido.
 
 ```markdown
 # Segurança
+
+## Nível aplicado
+Reforçado (ver references/09-seguranca.md) — motivo: <dado sensível /
+exposição pública / dinheiro, conforme confirmado no Bloco 6>
 
 ## Modelo de ameaças
 <o que estamos protegendo, de quem>
 
 ## Autenticação e autorização
-<mecanismo>
+<mecanismo, incluindo MFA se aplicável>
 
 ## Dados sensíveis
-<o que é coletado, como é protegido, retenção>
+<o que é coletado, como é protegido, retenção e expurgo>
+
+## Controles do Nível Reforçado aplicados
+<checklist de references/09-seguranca.md, seção Nível Reforçado — marque
+o que se aplica a este projeto>
 ```
 
 ---
@@ -288,6 +310,10 @@ Nunca commitar segredo em texto puro — ver RULES.md/SECURITY.md.
 [ ] Variáveis de ambiente de produção conferidas
 [ ] Plano de rollback testado ou pelo menos revisado
 [ ] Pessoa dona do projeto avisada da janela de publicação
+[ ] Nível Essencial de segurança confirmado — sem segredo commitado,
+    dependências auditadas (ver references/09-seguranca.md)
+[ ] Se SECURITY.md existir (Nível Reforçado): controles revisados pelo
+    sub-agente security-<projeto>
 ```
 
 A execução do deploy em si pode ser delegada pelo(a) gestor(a) a um

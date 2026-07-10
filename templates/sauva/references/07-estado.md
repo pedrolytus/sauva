@@ -88,9 +88,10 @@ herdado", para como o gestor herda e mantém esse comportamento.
   exige confirmação formal além do pedido em si.
 - Modo nunca remove os dois gates humanos formais (UAT por incremento,
   go/no-go de deploy) nem as regras invioláveis (append-only em specs/,
-  TDD, rastreabilidade spec↔código via `TRACEABILITY.md`, nunca alterar
-  teste sem aprovação, nunca ação irreversível sem aprovação). Ele modula
-  apenas profundidade e verbosidade do processo.
+  TDD, rastreabilidade spec↔código via `TRACEABILITY.md`, Nível Essencial
+  de segurança via `references/09-seguranca.md`, nunca alterar teste sem
+  aprovação, nunca ação irreversível sem aprovação). Ele modula apenas
+  profundidade e verbosidade do processo.
 
 ## Exemplo — projeto recém-iniciado, no meio da entrevista
 

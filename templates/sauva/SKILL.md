@@ -142,9 +142,10 @@ o mesmo modo depois do handoff.
   entrevista e das comunicações, mas NUNCA pule os dois gates humanos
   formais (UAT por incremento, go/no-go de deploy) nem as regras
   invioláveis (append-only em specs/, TDD, rastreabilidade spec↔código via
-  `TRACEABILITY.md`, nunca alterar teste sem aprovação, nunca ação
-  irreversível sem aprovação) — modo nunca remove salvaguarda, só ajusta
-  verbosidade e pacing.
+  `TRACEABILITY.md`, Nível Essencial de segurança via
+  `references/09-seguranca.md` em toda tarefa, nunca alterar teste sem
+  aprovação, nunca ação irreversível sem aprovação) — modo nunca remove
+  salvaguarda, só ajusta verbosidade e pacing.
 - Grave toda decisão relevante em um arquivo de `specs/`. Uma decisão que só
   existe na conversa não existe para o projeto.
 - Atualize `.sauva/state.json` a cada mudança de fase ou passo relevante —
@@ -316,6 +317,15 @@ O que você verifica:
    rastreio, registre como achado crítico — é exatamente o tipo de
    silêncio que faz a spec parar de servir como fonte da verdade capaz de
    recriar o sistema.
+8. **Segurança** — confira o Nível Essencial de `references/09-seguranca.md`
+   direto no código, não só em `RULES.md`: existe segredo commitado
+   (chave, senha, token)? Entrada externa chega sem validação em algum
+   ponto? Senha ou dado equivalente está em texto puro? Erro exposto ao
+   usuário revela detalhe interno? Qualquer achado aqui é crítico por
+   natureza — segurança não tem "achado menor". Se `specs/SECURITY.md`
+   existir (Nível Reforçado), confira também se os controles listados lá
+   (MFA, rate limiting, auditoria de acesso) realmente existem no código,
+   não só na intenção documentada.
 
 O output da revisão é um relatório gravado em `specs/REVISAO_GERAL.md`
 com três seções: Achados Críticos (bloqueiam aprovação), Achados Menores
@@ -358,3 +368,6 @@ não parafraseie de memória o que pode citar com precisão.
 - `references/08-gate-ui-ux.md` — como gerar um mockup visual real (não um
   documento) a partir de `DESIGN.md`, e o protocolo de aprovação explícita
   que bloqueia o handoff até a pessoa confirmar.
+- `references/09-seguranca.md` — checklist de segurança em dois níveis
+  (Essencial, sempre aplicado; Reforçado, só quando o Bloco 6 confirma
+  risco real), e o gatilho de quando recomendar auditoria externa.
