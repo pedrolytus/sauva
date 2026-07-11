@@ -45,6 +45,15 @@ primeira escolha.
 - Textos de exemplo realistas no domínio do projeto (não "Lorem Ipsum",
   não "Título aqui") — se o projeto é uma lista de compras, mostre itens de
   compra reais tipo "Leite", "Pão", não texto genérico.
+- Aplique o Nível Essencial de `references/10-padroes-design.md` mesmo no
+  mockup: espaçamento consistente, contraste adequado, elementos
+  interativos com aparência de clicável. O mockup é descartável, mas é
+  também a primeira impressão de qualidade — não vale a pena mostrar algo
+  abaixo do que vai ser entregue de verdade.
+- Se `DESIGN.md` indicar Nível Encantador, inclua pelo menos um estado
+  além do caminho feliz (vazio, erro, ou carregando — o que fizer mais
+  sentido pro produto) — é onde "encantador" costuma ser decidido ou
+  perdido, não só na tela principal.
 
 ## Protocolo de aprovação
 

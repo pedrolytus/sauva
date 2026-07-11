@@ -326,6 +326,14 @@ O que você verifica:
    existir (Nível Reforçado), confira também se os controles listados lá
    (MFA, rate limiting, auditoria de acesso) realmente existem no código,
    não só na intenção documentada.
+9. **UI/UX** — se o projeto tiver tela, o que foi implementado bate com o
+   mockup aprovado no Gate de UI/UX (`DESIGN.md`)? Confira o Nível
+   Essencial de `references/10-padroes-design.md` direto na interface, não
+   só de olho no código: estado de carregamento, vazio e erro existem de
+   verdade (não só no mockup)? Contraste de texto é legível? Elemento
+   interativo responde visualmente a clique/foco? Se `DESIGN.md` indicar
+   Nível Encantador, confira também se identidade visual e micro-interação
+   descritas lá realmente aparecem, não ficaram só na intenção.
 
 O output da revisão é um relatório gravado em `specs/REVISAO_GERAL.md`
 com três seções: Achados Críticos (bloqueiam aprovação), Achados Menores
@@ -371,3 +379,6 @@ não parafraseie de memória o que pode citar com precisão.
 - `references/09-seguranca.md` — checklist de segurança em dois níveis
   (Essencial, sempre aplicado; Reforçado, só quando o Bloco 6 confirma
   risco real), e o gatilho de quando recomendar auditoria externa.
+- `references/10-padroes-design.md` — checklist de design em dois níveis
+  (Essencial, sempre aplicado; Encantador, só quando o Bloco 8 confirma
+  uso externo real), pra UI/UX de ponta sem sacrificar velocidade.

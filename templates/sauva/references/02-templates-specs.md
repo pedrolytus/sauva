@@ -153,6 +153,11 @@ de criar `SECURITY.md`.
 ```markdown
 # Direção visual e de design
 
+## Nível de design (ver references/10-padroes-design.md)
+- Alcance: <uso interno/pessoal | uso externo real (cliente, público)>
+- Nível aplicado: <Essencial | Essencial + Encantador>
+- Motivo: <por que esse nível — quem vai usar de fato>
+
 ## Referências de inspiração
 - <descrição da inspiração 1 — se veio de print anexado, descreva o que foi
   identificado: paleta, densidade, estilo, layout>
@@ -174,6 +179,11 @@ de criar `SECURITY.md`.
 
 ## Padrões de layout observados nas referências
 - <ex.: navegação por abas, cards, listas densas, muito espaço em branco>
+
+## Estados a cobrir (todo projeto, independente do nível)
+- Carregando: <como fica a tela enquanto algo processa>
+- Vazio: <o que aparece quando não há dado ainda>
+- Erro: <como o erro é comunicado em linguagem humana>
 
 ## Anexos
 - Prints/imagens de referência salvos em `specs/inspiracoes/` (se o

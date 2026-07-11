@@ -175,14 +175,23 @@ siga o formato indicado na seção 9 do próprio arquivo. É esse
 agents e usado como critério de auditoria — não o template genérico da
 skill.
 
-## Bloco 8 — Inspirações visuais e estilo → `DESIGN.md`
+## Bloco 8 — Inspirações visuais, alcance e nível de design → `DESIGN.md`
 Pule este bloco só se o projeto genuinamente não tiver interface visual
 (ex.: um serviço de backend puro, um script sem tela). Para qualquer coisa
-que alguém vai olhar ou tocar, este bloco é obrigatório.
+que alguém vai olhar ou tocar, este bloco é obrigatório. O Nível Essencial
+de `references/10-padroes-design.md` (espaçamento consistente, contraste
+adequado, estados de carregamento/vazio/erro, responsivo, navegável por
+teclado) se aplica sempre, em qualquer projeto, sem perguntar — isso é
+decisão sua, não da pessoa. Este bloco decide se o projeto também precisa
+do Nível Encantador (identidade visual distintiva, micro-interação,
+onboarding, copywriting de UI — coisas que custam tempo real, só valem a
+pena quando há gente de fora pra sentir a diferença).
 
 **Diga assim:** "Você tem algum app ou site que acha bonito, ou que já se
 parece com o que você imagina? Pode mandar print, foto de tela, ou só
-descrever com suas palavras."
+descrever com suas palavras." seguido de "esse app vai ser usado só por
+você (ou por um grupo pequeno e fechado, tipo sua equipe), ou algum dia
+gente de fora — cliente, público em geral — vai usar?"
 - **Aceite anexos de imagem diretamente na conversa.** Quando a pessoa
   enviar prints/capturas de tela de inspiração, analise-os você mesmo —
   identifique paleta de cores predominante, densidade visual (limpo/denso),
@@ -194,6 +203,12 @@ descrever com suas palavras."
   e divertido", "sério e corporativo") e deixe ela escolher ou combinar.
 - Pergunte também: existe uma marca já definida (cores, logo, nome) que
   precisa ser respeitada?
+- Classifique o nível de design com base na resposta de alcance (se a
+  resposta de persona no Bloco 2 já deixou isso claro, não repita a
+  pergunta — só confirme): uso interno/pessoal → só Nível Essencial, e é
+  suficiente, não force Encantador "pra impressionar" sem alguém de fora
+  pra impressionar. Uso externo real (cliente, público) → Essencial +
+  Encantador. Registre a classificação em `DESIGN.md`.
 
 **Nota sobre anexos por harness:** em conversas de chat (Claude.ai), a
 pessoa anexa a imagem diretamente e você a vê nativamente. Em harnesses com
@@ -204,8 +219,9 @@ que foi absorvido das imagens em `DESIGN.md`.
 
 Este bloco alimenta diretamente o Gate de aprovação de UI/UX — antes da
 implementação começar, você vai gerar um mockup visual de verdade (não um
-documento pra ler) a partir do que foi capturado aqui. Ver
-`references/08-gate-ui-ux.md`.
+documento pra ler) a partir do que foi capturado aqui, incluindo pelo
+menos um estado além do caminho feliz (vazio, erro ou carregando) se o
+nível for Encantador. Ver `references/08-gate-ui-ux.md`.
 
 ## Bloco 9 — O que o sistema precisa guardar e organizar (se aplicável) → `API_SPEC.md` / `DATABASE_SCHEMA.md`
 **Diga assim:** "Quais são as 'coisas' principais que esse app vai

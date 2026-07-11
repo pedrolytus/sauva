@@ -90,18 +90,21 @@ Em qualquer modo, se a pessoa pedir explicitamente pra trocar
 ("muda pro modo dev daqui pra frente"), atualize `state.modo` e passe a
 seguir o novo modo imediatamente — não é uma decisão que precisa de gate.
 Isso NUNCA muda os dois gates humanos formais nem as regras invioláveis
-(append-only, TDD, rastreabilidade — ver "Sobre manter specs sincronizadas
-com o código", "Sobre ações irreversíveis" e "Sobre os gates do PO" abaixo)
-— modo afeta só profundidade e verbosidade.
+(append-only, TDD, rastreabilidade, Nível Essencial de segurança e de
+UI/UX — ver "Sobre manter specs sincronizadas com o código", "Sobre
+segurança", "Sobre UI/UX", "Sobre ações irreversíveis" e "Sobre os gates
+do PO" abaixo) — modo afeta só profundidade e verbosidade.
 
 ## Contexto Obrigatório
 Antes de qualquer tarefa, leia apenas os arquivos de specs/ relevantes à
 tarefa em questão — não a spec inteira a cada vez. Para implementação de
 domínio: ARCHITECTURE.md + RULES.md. Para endpoints: API_SPEC.md. Para
 dados: DATABASE_SCHEMA.md. Para deploy: DEPLOY.md + SECURITY.md. Para
-qualquer tarefa: TESTS_SPEC.md, AGENTS.md (restrições de comportamento
-valem sempre), specs/TRACEABILITY.md (pra saber o que já foi mapeado e
-não duplicar rastreio) e o Nível Essencial de
+qualquer tela: DESIGN.md + o Nível Essencial de
+`references/10-padroes-design.md` (aplica-se a TODA tela, ver "Sobre
+UI/UX" abaixo). Para qualquer tarefa: TESTS_SPEC.md, AGENTS.md (restrições
+de comportamento valem sempre), specs/TRACEABILITY.md (pra saber o que já
+foi mapeado e não duplicar rastreio) e o Nível Essencial de
 `references/09-seguranca.md` (aplica-se a TODA tarefa, não só às de
 segurança — ver "Sobre segurança" abaixo). Para decidir modelo e formato
 de sub-agente: leia specs/MODEL_ROUTING.md (política de roteamento
@@ -199,6 +202,25 @@ custo real de atrito (MFA, rate limiting, auditoria de acesso), e por
 isso só existem quando o arquivo existir, nunca por iniciativa sua sem
 essa confirmação prévia da pessoa.
 
+### Sobre UI/UX (Nível Essencial — regra inviolável, sem exceção de modo)
+O Nível Essencial de `references/10-padroes-design.md` (espaçamento
+consistente, contraste adequado, estado de carregamento/vazio/erro em
+toda tela, responsivo, navegável por teclado, HTML semântico) aplica-se a
+TODA tela implementada, mesmo que `DESIGN.md` não peça nível Encantador.
+Igual à segurança, isso é invisível como "decisão" e não custa tempo
+extra — não module por `state.modo`.
+
+Antes de abrir o Gate de UAT (ver "Sobre os gates do PO" abaixo), faça
+você mesmo(a) essa checagem primeiro — não deixe que seja a pessoa dona
+do projeto quem descubra que falta estado de carregamento ou que um botão
+não tem hover. Ela testa a funcionalidade; qualidade de base é seu
+trabalho, não achado dela.
+
+Se `DESIGN.md` indicar Nível Encantador, aplique também os itens daquela
+seção (micro-interação, identidade visual distintiva, onboarding,
+copywriting de UI) — esses têm custo real de tempo, por isso só valem
+quando o arquivo confirma esse nível.
+
 ### Sobre delegação e sub-agentes
 - Prefira delegar a implementar diretamente. Implemente você mesmo(a) só
   quando a tarefa for pequena, única e não recorrente.
@@ -257,8 +279,10 @@ tipo "criar tabela no banco"), pare antes de seguir pro próximo bloco de
 trabalho. Pré-requisito pra abrir este gate: todas as tarefas do incremento
 já têm linha em `specs/TRACEABILITY.md` e, se estenderam alguma spec, o
 apêndice já foi gravado (ver "Sobre manter specs sincronizadas com o
-código" acima) — o gate representa specs e código coerentes, não um
-"funciona, documento depois".
+código" acima); se o incremento tiver tela, o Nível Essencial de
+`references/10-padroes-design.md` já foi autoconferido por você (ver
+"Sobre UI/UX" acima) — o gate representa specs, código e qualidade de
+base coerentes, não um "funciona, ajusta depois".
 1. Registre em `.sauva/state.json`, `aprovacoes_pendentes`, um item com
    `gate: "UAT_incremento"` descrevendo o que foi entregue e como testar,
    em linguagem simples ("experimente cadastrar um item novo e ver se ele
